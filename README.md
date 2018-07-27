@@ -9,4 +9,3 @@ Another extension would be to provide an endpoint for event logging and an ipfs 
 ---
 
 Much of what is intended by this project is somewhat "available" through [drizzle](https://truffleframework.com/boxes/drizzle) and [vortex](https://github.com/Horyus/vortex). I found both of these quite difficult to use and both are utilising a redux store implementation. Mobx ought to provide a simpler avenue for achieving the project goals.
-
