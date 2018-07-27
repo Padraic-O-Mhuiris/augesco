@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+
+import '../node_modules/uikit/dist/css/uikit.min.css'
+import '../node_modules/uikit/dist/css/uikit-core.min.css'
+
+import '../node_modules/uikit/dist/js/uikit.min.js'
+import '../node_modules/uikit/dist/js/uikit-icons.min.js'
+import '../node_modules/uikit/dist/js/uikit-core.min.js'
+
+
+
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className="uk-container"> 
+        <h1 className="uk-heading-divider uk-text-center">Mobx truffle box</h1>
       </div>
     );
   }
