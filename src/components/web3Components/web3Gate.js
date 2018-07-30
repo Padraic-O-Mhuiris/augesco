@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import getWeb3 from '../../utils/getWeb3'
+import { inject } from "mobx-react"
 
+@inject("web3Store")
 class Web3Gate extends Component {
   constructor(props) {
     super(props)
@@ -20,9 +22,14 @@ class Web3Gate extends Component {
       console.log('Error finding web3.')
     })
   }
+  
+  componentDidUpdate() {
+    if(this.state.web3 !== null) {
+      this.props.web3Store.setWeb3(this.state.web3)
+    }
+  }
 
   render () {
-    console.log(this.state.web3)
     return (
       <div>
         {this.props.children}
