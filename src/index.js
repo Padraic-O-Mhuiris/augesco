@@ -27,6 +27,7 @@ const sampleModel = SampleModel.create({
     }
   ]
 })
+
 ReactDOM.render(<App sampleModel={sampleModel}/>, document.getElementById('root'))
 
 setInterval(() => {
