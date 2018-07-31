@@ -20,7 +20,8 @@ const web3Store = Web3Store.create({
   name: "",
   web3: {},
   status: web3Context.WEB3_LOADING,
-  balance: 0
+  balance: 0,
+  network: 0
 })
 
 const app = (

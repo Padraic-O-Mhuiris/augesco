@@ -6,6 +6,7 @@ export const Web3Store = types
     account: types.optional(types.string, ""),
     web3: types.frozen(),
     balance: types.number,
+    network: types.number,
     status: types.enumeration(
       [
         web3Context.WEB3_LOAD_ERR,
@@ -29,7 +30,10 @@ export const Web3Store = types
     },
     updateBalance(_balance) {
       self.balance = _balance
-    }
+    },
+    updateNetwork(_network) {
+      self.network = _network
+    } 
   }))
   .views(self => ({
     get instance() {

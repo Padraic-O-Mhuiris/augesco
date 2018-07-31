@@ -14,6 +14,8 @@ import { inject, observer } from "mobx-react"
           {this.props.web3Store.status}
           <br/>
           {this.props.web3Store.balance}
+          <br/>
+          {this.props.web3Store.network}
         </div>
       </Web3Gate>
     )
