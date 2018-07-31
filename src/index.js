@@ -2,6 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './assets/index.css'
 import App from './App'
+import { web3Context } from "./constants"
+
 
 // ********- CSS FRAMEWORK -********
 import '../node_modules/uikit/dist/css/uikit.min.css'
@@ -15,8 +17,10 @@ import { Web3Store } from "./models/web3Model"
 import { Provider } from "mobx-react"
 
 const web3Store = Web3Store.create({
-  name: "MY WEB3 STORE",
-  web3: {}
+  name: "",
+  web3: {},
+  status: web3Context.WEB3_LOADING,
+  balance: 0
 })
 
 const app = (
