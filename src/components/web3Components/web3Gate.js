@@ -51,46 +51,46 @@ import { web3Context, netContext } from "../../constants"
   fetchNetwork() {
     const { web3Store } = this.props
     const { networks } = this.props
-    web3Store.web3.eth.net.getId((err, _id) => {
-      if(err) {
-        web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
-      }
-      else {
-        switch (_id) {
-          case netContext.MAIN:
-            web3Store.updateNetwork(netContext.MAIN)
-            break
-          case netContext.MORDEN:
-            web3Store.updateNetwork(netContext.MORDEN)
-            break;
-          case netContext.ROPESTEN:
-            web3Store.updateNetwork(netContext.ROPESTEN)
-            break;
-          case netContext.RINKEBY:
-            web3Store.updateNetwork(netContext.RINKEBY)
-            break;
-          case netContext.KOVAN:
-            web3Store.updateNetwork(netContext.KOVAN)
-            break;
-          default:
-            web3Store.updateNetwork(netContext.LOCAL)
+    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) { 
+      web3Store.web3.eth.net.getId((err, _id) => {
+        if(err) {
+          web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
         }
-        
-        let check = false
-        for(const network of networks) {
-          if(network === web3Store.network) {
-            check = true
-            break
+        else {
+          switch (_id) {
+            case netContext.MAIN:
+              web3Store.updateNetwork(netContext.MAIN)
+              break
+            case netContext.MORDEN:
+              web3Store.updateNetwork(netContext.MORDEN)
+              break
+            case netContext.ROPESTEN:
+              web3Store.updateNetwork(netContext.ROPESTEN)
+              break
+            case netContext.RINKEBY:
+              web3Store.updateNetwork(netContext.RINKEBY)
+              break
+            case netContext.KOVAN:
+              web3Store.updateNetwork(netContext.KOVAN)
+              break
+            default:
+              web3Store.updateNetwork(netContext.LOCAL)
+          }
+          
+          let check = false
+          for(const network of networks) {
+            if(network === web3Store.network) {
+              check = true
+              break
+            }
+          }
+
+          if(!check) {
+            web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
           }
         }
-
-        if(!check) {
-          web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
-        }
-      }
-    })
-
-
+      })
+    }
   }
   
   instatiateWeb3() {
@@ -134,13 +134,79 @@ import { web3Context, netContext } from "../../constants"
   }
 
   render () {
-    console.log(this.props)
-
-    return (
-      <div>
-        {this.props.children}
-      </div>
-    )
+    const { web3Store } = this.props
+    
+    switch(web3Store.status) {
+      case web3Context.WEB3_LOADED:
+        /* 
+        **  The main application content is rendered here,
+        **  inherited through parent component and passed as
+        **  props.children below
+        */
+        return (
+          <div>
+            {this.props.children}
+          </div>
+        )
+      case web3Context.WEB3_LOADING:
+        /* 
+        **  When web3 is loading, it is simply trying to discover
+        **  its status and ought to quickly change status to another
+        **  context
+        */
+        return (
+          <div>
+            WEB3 LOADING
+          </div>
+        )
+      case web3Context.WEB3_LOCKED:
+        /* 
+        **  Render a view to the user to unlock their metamask account
+        */
+        return (
+          <div>
+            WEB3 LOCKED
+          </div>
+        )
+      case web3Context.WEB3_LOAD_ERR:
+        /* 
+        **  Metamask is not installed so render a view to guide user to
+        **  install
+        */
+        return (
+          <div>
+            WEB3 LOAD ERROR
+          </div>
+        )
+      case web3Context.WEB3_NET_ERR:
+        /* 
+        **  Application has disconnected from the internet or cannot find
+        **  current network
+        */
+        return (
+          <div>
+            WEB3 NETWORK ERROR
+          </div>
+        )
+      case web3Context.WEB3_CONTRACT_ERR:
+        /* 
+        **  Should the network where the applications
+        **  smart-contract is not instantiated, the application
+        **  will render this view
+        */
+        return(
+          <div>
+            WEB3 CONTRACT ERROR
+          </div>
+        )
+      default:
+        return (
+          <div>
+            SHOULD NOT REACH THIS CASE
+          </div>
+        )
+    }
+    
   }
 }
 
