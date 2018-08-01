@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import getWeb3 from '../../utils/getWeb3'
 import { inject, observer } from "mobx-react"
 import { web3Context, netContext } from "../../constants"
+import Web3Loading from "./web3Loading"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -155,9 +156,7 @@ import { web3Context, netContext } from "../../constants"
         **  context
         */
         return (
-          <div>
-            WEB3 LOADING
-          </div>
+          <Web3Loading/>
         )
       case web3Context.WEB3_LOCKED:
         /* 
