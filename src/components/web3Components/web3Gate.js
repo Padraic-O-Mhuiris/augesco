@@ -3,6 +3,7 @@ import getWeb3 from '../../utils/getWeb3'
 import { inject, observer } from "mobx-react"
 import { web3Context, netContext } from "../../constants"
 import Web3Loading from "./web3Loading"
+import Web3Locked from "./web3Locked"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -15,27 +16,31 @@ import Web3Loading from "./web3Loading"
 
   fetchAccounts() {
     const { web3Store } = this.props
-    web3Store.web3.eth.getAccounts((err, accounts) => {
-      if(err) {
-        console.log(err)
-        web3Store.updateStatus(web3Context.WEB3_LOAD_ERR)
-      } 
-      else {
-        if(accounts.length === 0) {
-          web3Store.updateStatus(web3Context.WEB3_LOCKED)
+
+    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
+      web3Store.web3.eth.getAccounts((err, accounts) => {
+        if(err) {
+          console.log(err)
+          web3Store.updateStatus(web3Context.WEB3_LOAD_ERR)
         } 
         else {
-          if(accounts[0] !== web3Store.account) {
-            web3Store.setAccount(accounts[0])
+          if(accounts.length === 0) {
+            web3Store.updateStatus(web3Context.WEB3_LOCKED)
+          } 
+          else {
+            web3Store.updateStatus(web3Context.WEB3_LOADED)
+            if(accounts[0] !== web3Store.account) {
+              web3Store.setAccount(accounts[0])
+            }
           }
         }
-      }
-    })
+      })
+    }
   }
 
   fetchBalance() {
     const { web3Store } = this.props
-    if(web3Store.status !== web3Context.WEB3_LOCKED && web3Store.status !== web3Context.WEB3_LOADING) {
+    if(web3Store.status === web3Context.WEB3_LOADED) {
       web3Store.web3.eth.getBalance(web3Store.account, (err, _balance) => {
         if(err) {
           console.log(err)
@@ -52,6 +57,7 @@ import Web3Loading from "./web3Loading"
   fetchNetwork() {
     const { web3Store } = this.props
     const { networks } = this.props
+    console.log(web3Store.status)
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) { 
       web3Store.web3.eth.net.getId((err, _id) => {
         if(err) {
@@ -94,7 +100,7 @@ import Web3Loading from "./web3Loading"
     }
   }
   
-  instatiateWeb3() {
+  instantiateWeb3() {
     const { web3Store } = this.props
     this.fetchAccounts()
     this.fetchNetwork()
@@ -128,7 +134,7 @@ import Web3Loading from "./web3Loading"
   componentDidUpdate() {
     if(this.state.web3 !== null) {
       this.props.web3Store.setWeb3(this.state.web3)
-      this.instatiateWeb3()
+      this.instantiateWeb3()
     } else {
       this.props.web3Store.updateStatus(web3Context.WEB3_LOAD_ERR)
     }
@@ -163,9 +169,7 @@ import Web3Loading from "./web3Loading"
         **  Render a view to the user to unlock their metamask account
         */
         return (
-          <div>
-            WEB3 LOCKED
-          </div>
+          <Web3Locked/>
         )
       case web3Context.WEB3_LOAD_ERR:
         /* 
