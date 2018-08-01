@@ -6,6 +6,7 @@ import Web3Loading from "./web3Loading"
 import Web3Locked from "./web3Locked"
 import Web3NotInstalled from "./web3NotInstalled"
 import Web3NoNetwork from "./web3NoNetwork"
+import Web3NoContract from "./web3NoContract"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -197,14 +198,11 @@ import Web3NoNetwork from "./web3NoNetwork"
         )
       case web3Context.WEB3_CONTRACT_ERR:
         /* 
-        **  Should the network where the applications
-        **  smart-contract is not instantiated, the application
-        **  will render this view
+        **  Current network should contain instance of smart contract. The instance
+        **  network and location should be instantiated in App.js
         */
         return(
-          <div>
-            WEB3 CONTRACT ERROR
-          </div>
+          <Web3NoContract data={this.props.networks}/>
         )
       default:
         return (

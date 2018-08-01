@@ -9,7 +9,9 @@ import { netContext } from "./constants"
     return (
       <Web3Gate 
         networks={[
-          netContext.LOCAL
+          netContext.LOCAL,
+          netContext.MAIN,
+          netContext.ROPESTEN
         ]}
       >
         <div className='uk-container'> 
