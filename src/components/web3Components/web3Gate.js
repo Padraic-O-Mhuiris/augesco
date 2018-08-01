@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import getWeb3 from '../../utils/getWeb3'
 import { inject, observer } from "mobx-react"
-import { web3Context } from "../../constants"
+import { web3Context, netContext } from "../../constants"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -50,16 +50,47 @@ import { web3Context } from "../../constants"
 
   fetchNetwork() {
     const { web3Store } = this.props
+    const { networks } = this.props
     web3Store.web3.eth.net.getId((err, _id) => {
       if(err) {
         web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
       }
       else {
-        if(_id !== web3Store.network) {
-          web3Store.updateNetwork(_id)
+        switch (_id) {
+          case netContext.MAIN:
+            web3Store.updateNetwork(netContext.MAIN)
+            break
+          case netContext.MORDEN:
+            web3Store.updateNetwork(netContext.MORDEN)
+            break;
+          case netContext.ROPESTEN:
+            web3Store.updateNetwork(netContext.ROPESTEN)
+            break;
+          case netContext.RINKEBY:
+            web3Store.updateNetwork(netContext.RINKEBY)
+            break;
+          case netContext.KOVAN:
+            web3Store.updateNetwork(netContext.KOVAN)
+            break;
+          default:
+            web3Store.updateNetwork(netContext.LOCAL)
+        }
+        
+        let check = false
+        for(const network of networks) {
+          if(network === web3Store.network) {
+            check = true
+            break
+          }
+        }
+
+        if(!check) {
+          web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
         }
       }
     })
+
+
   }
   
   instatiateWeb3() {
@@ -103,6 +134,8 @@ import { web3Context } from "../../constants"
   }
 
   render () {
+    console.log(this.props)
+
     return (
       <div>
         {this.props.children}

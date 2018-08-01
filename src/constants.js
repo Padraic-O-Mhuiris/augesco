@@ -5,6 +5,7 @@ export const web3Context = {
   WEB3_NET_ERR: "NETWORK_ERROR",
   WEB3_LOADING: "LOADING",
   WEB3_LOADED: "LOADED",
+  WEB3_CONTRACT_ERR: "CONTRACT_ERROR"
 }
 
 export const netContext = {

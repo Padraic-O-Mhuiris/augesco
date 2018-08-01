@@ -13,7 +13,8 @@ export const Web3Store = types
         web3Context.WEB3_NET_ERR,
         web3Context.WEB3_LOADED,
         web3Context.WEB3_LOADING,
-        web3Context.WEB3_LOCKED
+        web3Context.WEB3_LOCKED,
+        web3Context.WEB3_CONTRACT_ERR
       ]
     )
   })
