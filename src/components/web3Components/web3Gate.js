@@ -4,6 +4,7 @@ import { inject, observer } from "mobx-react"
 import { web3Context, netContext } from "../../constants"
 import Web3Loading from "./web3Loading"
 import Web3Locked from "./web3Locked"
+import Web3NotInstalled from "./web3NotInstalled"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -17,7 +18,7 @@ import Web3Locked from "./web3Locked"
   fetchAccounts() {
     const { web3Store } = this.props
 
-    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
+    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR && web3Store.status !== web3Context.WEB3_NET_ERR) {
       web3Store.web3.eth.getAccounts((err, accounts) => {
         if(err) {
           console.log(err)
@@ -58,7 +59,7 @@ import Web3Locked from "./web3Locked"
     const { web3Store } = this.props
     const { networks } = this.props
     console.log(web3Store.status)
-    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) { 
+    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR && web3Store.status !== web3Context.WEB3_NET_ERR) { 
       web3Store.web3.eth.net.getId((err, _id) => {
         if(err) {
           web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
@@ -177,9 +178,7 @@ import Web3Locked from "./web3Locked"
         **  install
         */
         return (
-          <div>
-            WEB3 LOAD ERROR
-          </div>
+          <Web3NotInstalled/>
         )
       case web3Context.WEB3_NET_ERR:
         /* 
