@@ -5,6 +5,7 @@ import { web3Context, netContext } from "../../constants"
 import Web3Loading from "./web3Loading"
 import Web3Locked from "./web3Locked"
 import Web3NotInstalled from "./web3NotInstalled"
+import Web3NoNetwork from "./web3NoNetwork"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -122,17 +123,23 @@ import Web3NotInstalled from "./web3NotInstalled"
   }
 
   componentWillMount() {
-    getWeb3.then(results => {
-      this.setState({
-        web3: results.web3
+    const online = navigator.onLine;
+    if(online) {
+      getWeb3.then(results => {
+        this.setState({
+          web3: results.web3
+        })
       })
-    })
-    .catch(() => {
-      console.log('Error finding web3.')
-    })      
+      .catch(() => {
+        console.log('Error finding web3.')
+      })
+    } else {
+      this.props.web3Store.updateStatus(web3Context.WEB3_NET_ERR)
+    }
   }
   
   componentDidUpdate() {
+    
     if(this.state.web3 !== null) {
       this.props.web3Store.setWeb3(this.state.web3)
       this.instantiateWeb3()
@@ -186,9 +193,7 @@ import Web3NotInstalled from "./web3NotInstalled"
         **  current network
         */
         return (
-          <div>
-            WEB3 NETWORK ERROR
-          </div>
+          <Web3NoNetwork/>
         )
       case web3Context.WEB3_CONTRACT_ERR:
         /* 
