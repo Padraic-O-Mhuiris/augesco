@@ -50,7 +50,7 @@ import Web3NoContract from "./web3NoContract"
         }
         else {
           if(_balance !== web3Store.balance) {
-            web3Store.updateBalance(Number(_balance))
+            web3Store.updateBalance(_balance)
           }
         }
       })
@@ -60,7 +60,7 @@ import Web3NoContract from "./web3NoContract"
   fetchNetwork() {
     const { web3Store } = this.props
     const { networks } = this.props
-    console.log(web3Store.status)
+
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR && web3Store.status !== web3Context.WEB3_NET_ERR) { 
       web3Store.web3.eth.net.getId((err, _id) => {
         if(err) {

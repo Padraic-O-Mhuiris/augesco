@@ -23,6 +23,12 @@ import { netContext } from "./constants"
           {this.props.web3Store.balance}
           <br/>
           {this.props.web3Store.network}
+          <br/>
+          {this.props.web3Store.balanceEth.balance} {this.props.web3Store.balanceEth.denom}
+          <br/>
+          {this.props.web3Store.balanceGwei.balance} {this.props.web3Store.balanceGwei.denom}
+          <br/>
+          {this.props.web3Store.balanceWei.balance} {this.props.web3Store.balanceWei.denom}
         </div>
       </Web3Gate>
     )

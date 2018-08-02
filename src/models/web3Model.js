@@ -1,11 +1,13 @@
 import { types } from 'mobx-state-tree'
 import { web3Context } from "../constants"
+import { BigNumber } from 'bignumber.js';
+
 
 export const Web3Store = types
   .model({
     account: types.optional(types.string, ""),
     web3: types.frozen(),
-    balance: types.number,
+    balance: types.string,
     network: types.number,
     status: types.enumeration(
       [
@@ -39,6 +41,27 @@ export const Web3Store = types
   .views(self => ({
     get instance() {
       return self.web3
+    },
+    get balanceEth() {
+      const _bal = new BigNumber(self.balance)
+      return {
+        balance: _bal.shiftedBy(-18).toString(),
+        denom: "eth"
+      }
+    },
+    get balanceGwei() {
+      const _bal = new BigNumber(self.balance)
+      return {
+        balance: _bal.shiftedBy(-9).toString(),
+        denom: "gwei"
+      }
+    },
+    get balanceWei() {
+      const _bal = new BigNumber(self.balance)
+      return {
+        balance: _bal.toString(),
+        denom: "wei"
+      }
     }
   }))
   
