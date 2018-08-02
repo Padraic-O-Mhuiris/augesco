@@ -2,7 +2,6 @@ import { types } from 'mobx-state-tree'
 import { web3Context } from "../constants"
 import { BigNumber } from 'bignumber.js';
 
-
 export const Web3Store = types
   .model({
     account: types.optional(types.string, ""),
