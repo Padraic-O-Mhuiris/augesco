@@ -11,7 +11,7 @@ const contractPurchase = require("../build/contracts/Purchase.json")
 @observer class App extends Component {
 
   render () {
-    //console.log(this.props.contractStore.contracts.get("Purchase"))
+    console.log(this.props.contractStore.contracts.get("Purchase"))
     return (
       <Web3Gate 
         networks={[

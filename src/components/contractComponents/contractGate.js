@@ -7,7 +7,13 @@ import { web3Context } from "../../constants"
 @observer class ContractGate extends Component {
 
   parseContractMethods(_methodsWeb3, _abi) {
-    return {}
+    const methodObj = {}
+    for(const method of Object.keys(_methodsWeb3)) {
+      if(/([a-z]*[()])/.test(method)) {
+        methodObj[method] = _methodsWeb3[method]
+      }
+    }
+    return methodObj
   }
 
   parseContract(_contract) {
