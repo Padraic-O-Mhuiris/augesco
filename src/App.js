@@ -3,18 +3,24 @@ import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
 import { netContext } from "./constants"
 
+const contractPurchase = require("../build/contracts/Purchase.json")
+
 
 @inject("web3Store")
 @inject("contractStore")
 @observer class App extends Component {
 
-  render () {    
+  render () {
+    //console.log(this.props.contractStore.contracts.get("Purchase"))
     return (
       <Web3Gate 
         networks={[
           netContext.LOCAL,
           netContext.MAIN,
           netContext.ROPESTEN
+        ]}
+        contracts={[
+          contractPurchase
         ]}
       >
         <div className='uk-container'> 

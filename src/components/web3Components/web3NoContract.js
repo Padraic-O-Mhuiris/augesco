@@ -15,17 +15,17 @@ class Web3NoNetwork extends Component {
               <table className="uk-table uk-table-striped uk-table-small">
                 <thead>
                   <tr>
-                      <th>Available networks</th>
+                      <th>Your contract was not found!</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {this.props.data.map((item, idx) => 
+                  {/* {this.props.data.map((item, idx) => 
                     (
                       <tr key={idx}>
                         <td className="uk-text-left">{getWeb3Network(item)}</td>
                       </tr>
                     ))
-                  }
+                  } */}
                 </tbody>
               </table>
               </div>

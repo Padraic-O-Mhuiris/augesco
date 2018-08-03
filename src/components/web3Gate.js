@@ -7,6 +7,7 @@ import Web3Locked from "./web3Components/web3Locked"
 import Web3NotInstalled from "./web3Components/web3NotInstalled"
 import Web3NoNetwork from "./web3Components/web3NoNetwork"
 import Web3NoContract from "./web3Components/web3NoContract"
+import ContractGate from "./contractComponents/contractGate"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -35,6 +36,7 @@ import Web3NoContract from "./web3Components/web3NoContract"
             if(accounts[0] !== web3Store.account) {
               web3Store.setAccount(accounts[0])
             }
+            this.fetchBalance()
           }
         }
       })
@@ -107,7 +109,7 @@ import Web3NoContract from "./web3Components/web3NoContract"
     const { web3Store } = this.props
     this.fetchAccounts()
     this.fetchNetwork()
-    this.BalanceInterval = setInterval(() => this.fetchBalance(), 1000);
+    //this.BalanceInterval = setInterval(() => this.fetchBalance(), 1000);
     
     web3Store.web3.currentProvider.publicConfigStore.on('update', (res) => {
       this.fetchAccounts()
@@ -160,9 +162,11 @@ import Web3NoContract from "./web3Components/web3NoContract"
         **  props.children below
         */
         return (
-          <div>
+          <ContractGate
+            contracts={this.props.contracts}
+          >
             {this.props.children}
-          </div>
+          </ContractGate>
         )
       case web3Context.WEB3_LOADING:
         /* 

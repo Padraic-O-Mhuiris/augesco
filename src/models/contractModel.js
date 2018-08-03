@@ -2,10 +2,13 @@ import { types } from 'mobx-state-tree'
 
 export const ContractInstance = types
   .model({
+    name: types.identifier,
     abi: types.frozen(),
+    txHash: types.frozen(),
     address: types.string,
     contract: types.frozen(),
-    methods: types.optional(types.frozen(), {})
+    methods: types.optional(types.frozen(), {}),
+    // events: types.optional(types.frozen(), {})
   })
 
 export const ContractStore = types
@@ -13,9 +16,11 @@ export const ContractStore = types
     contracts: types.map(ContractInstance)
   })
   .actions(self => ({
-    add(_id, _abi, _address, _contract, _methods) {
+    add(_id, _abi, _txHash, _address, _contract, _methods) {
       self.contracts.set(_id, ContractInstance.create({ 
+          name: _id,
           abi: _abi,
+          txHash: _txHash,
           address: _address,
           contract: _contract,
           methods:  _methods
