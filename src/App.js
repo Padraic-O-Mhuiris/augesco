@@ -5,13 +5,11 @@ import { netContext } from "./constants"
 
 const contractPurchase = require("../build/contracts/Purchase.json")
 
-
 @inject("web3Store")
 @inject("contractStore")
 @observer class App extends Component {
 
   render () {
-    console.log(this.props.contractStore.contracts.get("Purchase"))
     return (
       <Web3Gate 
         networks={[

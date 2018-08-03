@@ -10,6 +10,7 @@ import Web3NoContract from "./web3Components/web3NoContract"
 import ContractGate from "./contractComponents/contractGate"
 
 @inject("web3Store")
+@inject("contractStore")
 @observer class Web3Gate extends Component {
   constructor(props) {
     super(props)
@@ -153,7 +154,7 @@ import ContractGate from "./contractComponents/contractGate"
 
   render () {
     const { web3Store } = this.props
-    
+
     switch(web3Store.status) {
       case web3Context.WEB3_LOADED:
         /* 
@@ -215,7 +216,6 @@ import ContractGate from "./contractComponents/contractGate"
           </div>
         )
     }
-    
   }
 }
 
