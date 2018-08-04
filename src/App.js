@@ -3,7 +3,7 @@ import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
 import { netContext } from "./constants"
 
-const contractPurchase = require("../build/contracts/Purchase.json")
+const contractCounter = require("../build/contracts/Counter.json")
 
 @inject("web3Store")
 @inject("contractStore")
@@ -12,6 +12,7 @@ const contractPurchase = require("../build/contracts/Purchase.json")
   render () {
     const { contractStore } = this.props
     const { web3Store } = this.props
+    console.log(contractStore.use("Counter"))
     return (
       <Web3Gate 
         networks={[
@@ -20,7 +21,7 @@ const contractPurchase = require("../build/contracts/Purchase.json")
           netContext.ROPESTEN
         ]}
         contracts={[
-          contractPurchase
+          contractCounter
         ]}
       >
         <div className='uk-container'> 
@@ -41,7 +42,7 @@ const contractPurchase = require("../build/contracts/Purchase.json")
           <br/>
           {contractStore.loaded.toString()}
           <br/>
-          {contractStore.use("Purchase").address} contract address
+          {contractStore.use("Counter").address} contract address
           <br/>
         </div>
       </Web3Gate>

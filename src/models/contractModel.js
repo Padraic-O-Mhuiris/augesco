@@ -6,7 +6,7 @@ export const ContractInstance = types
     abi: types.frozen(),
     txHash: types.frozen(),
     address: types.string,
-    contract: types.frozen(),
+    contract: types.optional(types.frozen(), {}),
     methods: types.optional(types.frozen(), {}),
   })
 

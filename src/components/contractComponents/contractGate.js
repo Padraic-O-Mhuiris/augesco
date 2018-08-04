@@ -11,6 +11,7 @@ import ContractLoading from "./contractLoading"
     const methodObj = {}
     for(const method of Object.keys(_methodsWeb3)) {
       if(/([a-z]*[()])/.test(method)) {
+
         methodObj[method] = _methodsWeb3[method]
       }
     }
@@ -20,7 +21,7 @@ import ContractLoading from "./contractLoading"
   parseContract(_contract) {
     const { web3Store } = this.props
     const { contractStore } = this.props
-    console.log(web3Store.network)
+
     var check = true
     for(const network of Object.keys(_contract.networks)) {
       if(network === web3Store.network.toString()) {
@@ -32,7 +33,7 @@ import ContractLoading from "./contractLoading"
     if(check) {
       web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
     } else {
-
+      
       const contractName = _contract.contractName
       const contractAbi = _contract.abi
       const contractTxHash = _contract.networks[web3Store.network].transactionHash
