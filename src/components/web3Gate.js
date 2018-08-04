@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import getWeb3 from '../../utils/getWeb3'
+import getWeb3 from '../utils/getWeb3'
 import { inject, observer } from "mobx-react"
-import { web3Context, netContext } from "../../constants"
-import Web3Loading from "./web3Loading"
-import Web3Locked from "./web3Locked"
-import Web3NotInstalled from "./web3NotInstalled"
-import Web3NoNetwork from "./web3NoNetwork"
-import Web3NoContract from "./web3NoContract"
+import { web3Context, netContext } from "../constants"
+import Web3Loading from "./web3Components/web3Loading"
+import Web3Locked from "./web3Components/web3Locked"
+import Web3NotInstalled from "./web3Components/web3NotInstalled"
+import Web3NoNetwork from "./web3Components/web3NoNetwork"
+import Web3NoContract from "./web3Components/web3NoContract"
+import ContractGate from "./contractComponents/contractGate"
 
 @inject("web3Store")
 @observer class Web3Gate extends Component {
@@ -31,10 +32,15 @@ import Web3NoContract from "./web3NoContract"
             web3Store.updateStatus(web3Context.WEB3_LOCKED)
           } 
           else {
-            web3Store.updateStatus(web3Context.WEB3_LOADED)
-            if(accounts[0] !== web3Store.account) {
-              web3Store.setAccount(accounts[0])
-            }
+            web3Store.determineNetwork().then((network) => {
+              web3Store.updateNetwork(network)
+              if(accounts[0] !== web3Store.account) {
+                web3Store.setAccount(accounts[0])
+              }
+              this.fetchBalance()
+              web3Store.updateStatus(web3Context.WEB3_LOADED)
+            })
+            
           }
         }
       })
@@ -56,62 +62,14 @@ import Web3NoContract from "./web3NoContract"
       })
     }
   }
-
-  fetchNetwork() {
-    const { web3Store } = this.props
-    const { networks } = this.props
-
-    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR && web3Store.status !== web3Context.WEB3_NET_ERR) { 
-      web3Store.web3.eth.net.getId((err, _id) => {
-        if(err) {
-          web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
-        }
-        else {
-          switch (_id) {
-            case netContext.MAIN:
-              web3Store.updateNetwork(netContext.MAIN)
-              break
-            case netContext.MORDEN:
-              web3Store.updateNetwork(netContext.MORDEN)
-              break
-            case netContext.ROPESTEN:
-              web3Store.updateNetwork(netContext.ROPESTEN)
-              break
-            case netContext.RINKEBY:
-              web3Store.updateNetwork(netContext.RINKEBY)
-              break
-            case netContext.KOVAN:
-              web3Store.updateNetwork(netContext.KOVAN)
-              break
-            default:
-              web3Store.updateNetwork(netContext.LOCAL)
-          }
-          
-          let check = false
-          for(const network of networks) {
-            if(network === web3Store.network) {
-              check = true
-              break
-            }
-          }
-
-          if(!check) {
-            web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
-          }
-        }
-      })
-    }
-  }
   
   instantiateWeb3() {
     const { web3Store } = this.props
     this.fetchAccounts()
-    this.fetchNetwork()
-    this.BalanceInterval = setInterval(() => this.fetchBalance(), 1000);
+    //this.BalanceInterval = setInterval(() => this.fetchBalance(), 1000);
     
-    web3Store.web3.currentProvider.publicConfigStore.on('update', (res) => {
+    web3Store.web3.currentProvider.publicConfigStore.on('update', () => {
       this.fetchAccounts()
-      this.fetchNetwork()
     });
 
     window.addEventListener('offline', function(e) { 
@@ -151,7 +109,6 @@ import Web3NoContract from "./web3NoContract"
 
   render () {
     const { web3Store } = this.props
-    
     switch(web3Store.status) {
       case web3Context.WEB3_LOADED:
         /* 
@@ -160,9 +117,11 @@ import Web3NoContract from "./web3NoContract"
         **  props.children below
         */
         return (
-          <div>
+          <ContractGate
+            contracts={this.props.contracts}
+          >
             {this.props.children}
-          </div>
+          </ContractGate>
         )
       case web3Context.WEB3_LOADING:
         /* 
@@ -211,7 +170,6 @@ import Web3NoContract from "./web3NoContract"
           </div>
         )
     }
-    
   }
 }
 

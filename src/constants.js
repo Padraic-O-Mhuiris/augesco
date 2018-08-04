@@ -16,3 +16,4 @@ export const netContext = {
   KOVAN: 42,
   LOCAL: -1
 }
+

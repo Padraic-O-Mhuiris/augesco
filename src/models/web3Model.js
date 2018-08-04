@@ -1,7 +1,6 @@
-import { types } from 'mobx-state-tree'
+import { types , flow} from 'mobx-state-tree'
 import { web3Context } from "../constants"
 import { BigNumber } from 'bignumber.js';
-
 
 export const Web3Store = types
   .model({
@@ -36,7 +35,14 @@ export const Web3Store = types
     },
     updateNetwork(_network) {
       self.network = _network
-    } 
+    },
+    determineNetwork: flow(function* determineNetwork() {
+      try {
+        return yield self.web3.eth.net.getId()
+      } catch (error) {
+        self.updateStatus(web3Context.WEB3_NET_ERR)
+      }
+    })
   }))
   .views(self => ({
     get instance() {
