@@ -1,5 +1,4 @@
 import { types } from 'mobx-state-tree'
-import { contractContext } from "../constants"
 
 export const ContractInstance = types
   .model({
@@ -14,30 +13,27 @@ export const ContractInstance = types
 export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
-    status: types.enumeration([
-      contractContext.CONTRACTS_LOADED,
-      contractContext.CONTRACTS_LOADING
-    ])
+    loaded: types.boolean
   })
   .actions(self => ({
     add(_id, _abi, _txHash, _address, _contract, _methods) {
-      self.contracts.set(_id, ContractInstance.create({ 
+      self.contracts.set(_id, { 
           name: _id,
           abi: _abi,
           txHash: _txHash,
           address: _address,
           contract: _contract,
           methods:  _methods
-        }))
+        })
     },
     delete(_id) {
       self.contracts.delete(_id)
     },
-    updateStatus(_status) {
-      self.status = _status
+    toggleLoaded() {
+      self.loaded = !self.loaded
     },
     use(_id) {
-      if(self.contracts.has(_id)) {
+      if(self.loaded && self.contracts.has(_id)) {
         return self.contracts.get(_id)
       } else {
         return {}

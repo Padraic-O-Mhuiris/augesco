@@ -10,7 +10,6 @@ import Web3NoContract from "./web3Components/web3NoContract"
 import ContractGate from "./contractComponents/contractGate"
 
 @inject("web3Store")
-@inject("contractStore")
 @observer class Web3Gate extends Component {
   constructor(props) {
     super(props)
@@ -33,11 +32,15 @@ import ContractGate from "./contractComponents/contractGate"
             web3Store.updateStatus(web3Context.WEB3_LOCKED)
           } 
           else {
-            web3Store.updateStatus(web3Context.WEB3_LOADED)
-            if(accounts[0] !== web3Store.account) {
-              web3Store.setAccount(accounts[0])
-            }
-            this.fetchBalance()
+            web3Store.determineNetwork().then((network) => {
+              web3Store.updateNetwork(network)
+              if(accounts[0] !== web3Store.account) {
+                web3Store.setAccount(accounts[0])
+              }
+              this.fetchBalance()
+              web3Store.updateStatus(web3Context.WEB3_LOADED)
+            })
+            
           }
         }
       })
@@ -59,62 +62,14 @@ import ContractGate from "./contractComponents/contractGate"
       })
     }
   }
-
-  fetchNetwork() {
-    const { web3Store } = this.props
-    const { networks } = this.props
-
-    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR && web3Store.status !== web3Context.WEB3_NET_ERR) { 
-      web3Store.web3.eth.net.getId((err, _id) => {
-        if(err) {
-          web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
-        }
-        else {
-          switch (_id) {
-            case netContext.MAIN:
-              web3Store.updateNetwork(netContext.MAIN)
-              break
-            case netContext.MORDEN:
-              web3Store.updateNetwork(netContext.MORDEN)
-              break
-            case netContext.ROPESTEN:
-              web3Store.updateNetwork(netContext.ROPESTEN)
-              break
-            case netContext.RINKEBY:
-              web3Store.updateNetwork(netContext.RINKEBY)
-              break
-            case netContext.KOVAN:
-              web3Store.updateNetwork(netContext.KOVAN)
-              break
-            default:
-              web3Store.updateNetwork(netContext.LOCAL)
-          }
-          
-          let check = false
-          for(const network of networks) {
-            if(network === web3Store.network) {
-              check = true
-              break
-            }
-          }
-
-          if(!check) {
-            web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
-          }
-        }
-      })
-    }
-  }
   
   instantiateWeb3() {
     const { web3Store } = this.props
     this.fetchAccounts()
-    this.fetchNetwork()
     //this.BalanceInterval = setInterval(() => this.fetchBalance(), 1000);
     
-    web3Store.web3.currentProvider.publicConfigStore.on('update', (res) => {
+    web3Store.web3.currentProvider.publicConfigStore.on('update', () => {
       this.fetchAccounts()
-      this.fetchNetwork()
     });
 
     window.addEventListener('offline', function(e) { 
@@ -154,7 +109,6 @@ import ContractGate from "./contractComponents/contractGate"
 
   render () {
     const { web3Store } = this.props
-
     switch(web3Store.status) {
       case web3Context.WEB3_LOADED:
         /* 

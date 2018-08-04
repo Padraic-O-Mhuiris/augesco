@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
-import { web3Context, contractContext } from "../../constants"
+import { web3Context} from "../../constants"
 import ContractLoading from "./contractLoading"
 
 @inject("web3Store")
@@ -20,41 +20,35 @@ import ContractLoading from "./contractLoading"
   parseContract(_contract) {
     const { web3Store } = this.props
     const { contractStore } = this.props
-
-    web3Store.web3.eth.net.getId((err, _id) => {
-      if(err) {
-        console.log(err)
-      } else {
-        var check = true
-        for(const network of Object.keys(_contract.networks)) {
-          if(network !== _id) {
-            check = !check
-            break
-          }
-        }
-
-        if(check) {
-          web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
-        } else {
-
-          const contractName = _contract.contractName
-          const contractAbi = _contract.abi
-          const contractTxHash = _contract.networks[_id].transactionHash
-          const contractAddress = _contract.networks[_id].address
-          const contractWeb3 = new web3Store.web3.eth.Contract(contractAbi, contractAddress)
-          const contractMethods = this.parseContractMethods(contractWeb3.methods, contractAbi)
-          
-          contractStore.add(
-            contractName,
-            contractAbi,
-            contractTxHash,
-            contractAddress,
-            contractWeb3,
-            contractMethods
-          )
-        }
+    console.log(web3Store.network)
+    var check = true
+    for(const network of Object.keys(_contract.networks)) {
+      if(network === web3Store.network.toString()) {
+        check = !check
+        break
       }
-    })
+    }
+
+    if(check) {
+      web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
+    } else {
+
+      const contractName = _contract.contractName
+      const contractAbi = _contract.abi
+      const contractTxHash = _contract.networks[web3Store.network].transactionHash
+      const contractAddress = _contract.networks[web3Store.network].address
+      const contractWeb3 = new web3Store.web3.eth.Contract(contractAbi, contractAddress)
+      const contractMethods = this.parseContractMethods(contractWeb3.methods, contractAbi)
+      
+      contractStore.add(
+        contractName,
+        contractAbi,
+        contractTxHash,
+        contractAddress,
+        contractWeb3,
+        contractMethods
+      )
+    }
   }
 
   componentDidMount() {
@@ -66,27 +60,24 @@ import ContractLoading from "./contractLoading"
     }
 
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
-      contractStore.updateStatus(contractContext.CONTRACTS_LOADED)
+      contractStore.toggleLoaded()
     }
   }
   
   render () {
     const { contractStore } = this.props
-    switch(contractStore.status) {
-      case contractContext.CONTRACTS_LOADED:
-        return (
-          <div>
-            {this.props.children}
-          </div>
-        )
-      case contractContext.CONTRACTS_LOADING:
-        return (
-          <ContractLoading/>
-        )
-      default:
-        return (<div></div>)
+
+    if(contractStore.loaded) {
+      return (
+        <div>
+          {this.props.children}
+        </div>
+      )
+    } else {
+      return (
+        <ContractLoading/>
+      )
     }
-    
   }
 }
 

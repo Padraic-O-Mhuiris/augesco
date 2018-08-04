@@ -8,11 +8,6 @@ export const web3Context = {
   WEB3_CONTRACT_ERR: "CONTRACT_ERROR"
 }
 
-export const contractContext = {
-  CONTRACTS_LOADED: "CONTRACT_LOADED",
-  CONTRACTS_LOADING: "CONTRACTS_LOADING"
-}
-
 export const netContext = {
   MAIN: 1,
   MORDEN: 2,

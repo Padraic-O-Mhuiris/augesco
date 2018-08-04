@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './assets/index.css'
 import App from './App'
-import { web3Context, contractContext  } from "./constants"
+import { web3Context } from "./constants"
 
 
 // ********- CSS FRAMEWORK -********
@@ -27,7 +27,7 @@ const web3Store = Web3Store.create({
 
 const contractStore = ContractStore.create({
   contracts: {},
-  status: contractContext.CONTRACTS_LOADING
+  loaded: false
 })
 
 const app = (

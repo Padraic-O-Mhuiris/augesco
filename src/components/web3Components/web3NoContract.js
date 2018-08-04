@@ -3,7 +3,6 @@ import getWeb3Network from "../../utils/getWeb3Network"
 
 class Web3NoNetwork extends Component {
   render () {
-    console.log(this.props)
     return (
       <div uk-height-viewport="expand: true">
         <div className="uk-section-small"></div>
