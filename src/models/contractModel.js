@@ -1,4 +1,4 @@
-import { types } from 'mobx-state-tree'
+import { types, flow } from 'mobx-state-tree'
 
 export const ContractInstance = types
   .model({
@@ -7,7 +7,7 @@ export const ContractInstance = types
     txHash: types.frozen(),
     address: types.string,
     contract: types.optional(types.frozen(), {}),
-    methods: types.optional(types.frozen(), {}),
+    methods: types.optional(types.frozen(), {})
   })
   .actions(self => ({
     getMethod(_method) {
@@ -44,13 +44,32 @@ export const ContractStore = types
         return {}
       }      
     },  
+    getMethod(_id, _method) {
+      if(self.loaded && self.contracts.has(_id)) {
+        return self.use(_id).getMethod(_method)
+      } else {
+        return {}
+      }      
+    },
     getMethodArgs(_id, _method) {
       if(self.loaded && self.contracts.has(_id)) {
         return self.use(_id).getMethod(_method).inputs
       } else {
         return {}
       }      
-    }  
+    },
+    call: flow(function* call(_id, _method, _args) {
+      if(self.loaded && self.contracts.has(_id)) {
+        try {
+          const res = yield self.getMethod(_id, _method)["func"](..._args).call()
+          return res
+        } catch (error){
+          console.error(error)
+        }
+      } else {
+        return undefined
+      }
+    })
   }))
   .views(self => ({
     get keys() {
