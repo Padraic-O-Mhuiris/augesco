@@ -61,8 +61,28 @@ export const ContractStore = types
     call: flow(function* call(_id, _method, _args) {
       if(self.loaded && self.contracts.has(_id)) {
         try {
-          const res = yield self.getMethod(_id, _method)["func"](..._args).call()
-          return res
+          return yield self.getMethod(_id, _method)["func"](..._args).call()   
+        } catch (error){
+          console.error(error)
+        }
+      } else {
+        return undefined
+      }
+    }),
+    exec: flow(function* exec(_id, _method, _args, _params) {
+      if(self.loaded && self.contracts.has(_id)) {
+        try {
+          return yield self.getMethod(_id, _method)["func"](..._args)
+          .send(_params)
+          .on('transactionHash', function(hash){
+            return hash
+          })
+          .on('confirmation', function(confirmationNumber, receipt){
+            return {confirmationNumber, receipt}
+          })
+          .on('receipt', function(receipt){
+              return receipt
+          }).on('error', console.error);
         } catch (error){
           console.error(error)
         }

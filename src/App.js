@@ -11,12 +11,22 @@ const contractCounter = require("../build/contracts/Counter.json")
   constructor(props) {
     super(props)
 
-    this.handleClick = this.handleClick.bind(this)
+    this.handleClick1 = this.handleClick1.bind(this)
+    this.handleClick2 = this.handleClick2.bind(this)
   }
 
-  async handleClick() {
+  async handleClick1() {
     const { contractStore } = this.props
+    const { web3Store } = this.props
     console.log(await contractStore.call("Counter", "getCount", []))
+  }
+
+  async handleClick2() {
+    const { contractStore } = this.props
+    const { web3Store } = this.props
+    console.log(await contractStore.exec("Counter", "incCount", [], {
+      "from": web3Store.account
+    }))
   }
 
   render () {
@@ -46,7 +56,8 @@ const contractCounter = require("../build/contracts/Counter.json")
       >
         <div className='uk-container'> 
           <h1 className='uk-heading-divider uk-text-center'>Mobx truffle box</h1>
-          <button className="uk-button uk-button-default" onClick={this.handleClick}>Click Me</button>
+          <button className="uk-button uk-button-default" onClick={this.handleClick1}>Click Me [1]</button>
+          <button className="uk-button uk-button-default" onClick={this.handleClick2}>Click Me [2]</button>
 
           <br/>
         </div>
