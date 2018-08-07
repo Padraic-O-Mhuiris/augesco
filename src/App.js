@@ -8,6 +8,16 @@ const contractCounter = require("../build/contracts/Counter.json")
 @inject("web3Store")
 @inject("contractStore")
 @observer class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  async handleClick() {
+    const { contractStore } = this.props
+    console.log(await contractStore.call("Counter", "getCount", []))
+  }
 
   render () {
     const { contractStore } = this.props
@@ -36,23 +46,8 @@ const contractCounter = require("../build/contracts/Counter.json")
       >
         <div className='uk-container'> 
           <h1 className='uk-heading-divider uk-text-center'>Mobx truffle box</h1>
-          {web3Store.account}
-          <br/>
-          {web3Store.status}
-          <br/>
-          {web3Store.balance}
-          <br/>
-          {web3Store.network}
-          <br/>
-          {web3Store.balanceEth.balance} {web3Store.balanceEth.denom}
-          <br/>
-          {web3Store.balanceGwei.balance} {web3Store.balanceGwei.denom}
-          <br/>
-          {web3Store.balanceWei.balance} {web3Store.balanceWei.denom}
-          <br/>
-          {contractStore.loaded.toString()}
-          <br/>
-          {contractStore.use("Counter").address} contract address
+          <button className="uk-button uk-button-default" onClick={this.handleClick}>Click Me</button>
+
           <br/>
         </div>
       </Web3Gate>
