@@ -12,7 +12,7 @@ const contractCounter = require("../build/contracts/Counter.json")
   render () {
     const { contractStore } = this.props
     const { web3Store } = this.props
-    console.log(contractStore.use("Counter"))
+    console.log(contractStore.getMethodArgs("Counter", "changeCount"))
     // console.log(contractStore.use("Counter").exec("method", [params], {
     //   from: "",
     //   gasPrice: "",

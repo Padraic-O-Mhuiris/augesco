@@ -9,6 +9,11 @@ export const ContractInstance = types
     contract: types.optional(types.frozen(), {}),
     methods: types.optional(types.frozen(), {}),
   })
+  .actions(self => ({
+    getMethod(_method) {
+      return self.methods[_method]
+    }
+  }))
 
 export const ContractStore = types
   .model({
@@ -35,6 +40,13 @@ export const ContractStore = types
     use(_id) {
       if(self.loaded && self.contracts.has(_id)) {
         return self.contracts.get(_id)
+      } else {
+        return {}
+      }      
+    },  
+    getMethodArgs(_id, _method) {
+      if(self.loaded && self.contracts.has(_id)) {
+        return self.use(_id).getMethod(_method).inputs
       } else {
         return {}
       }      
