@@ -6,13 +6,26 @@ import ContractLoading from "./contractLoading"
 @inject("web3Store")
 @inject("contractStore")
 @observer class ContractGate extends Component {
+  
+  parseContractAbi(key, _abi) {
+    for(const method of _abi) {
+      if(method.name === key) {
+        return method
+      }
+    }
+    return {}
+  }
 
   parseContractMethods(_methodsWeb3, _abi) {
     const methodObj = {}
     for(const method of Object.keys(_methodsWeb3)) {
       if(/([a-z]*[()])/.test(method)) {
-
-        methodObj[method] = _methodsWeb3[method]
+        const obj = {}
+        const key = method.split('(')[0]
+        obj["func"] = _methodsWeb3[method]
+        const methodAbi = this.parseContractAbi(key, _abi)
+        methodAbi["func"] = _methodsWeb3[method]
+        methodObj[key] = methodAbi
       }
     }
     return methodObj

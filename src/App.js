@@ -13,6 +13,12 @@ const contractCounter = require("../build/contracts/Counter.json")
     const { contractStore } = this.props
     const { web3Store } = this.props
     console.log(contractStore.use("Counter"))
+    // console.log(contractStore.use("Counter").exec("method", [params], {
+    //   from: "",
+    //   gasPrice: "",
+    //   gas: "",
+    //   value: ""
+    // }))
     return (
       <Web3Gate 
         networks={[
