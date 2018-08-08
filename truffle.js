@@ -1,3 +1,7 @@
+const HDWalletProvider = require("truffle-hdwallet-provider");
+const mnemonic = "";
+const INFURA_Access_Token = ""
+
 module.exports = {
   migrations_directory: "./migrations",
   networks: {
@@ -5,7 +9,14 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "*" // Match any network id
-    }
+    },
+    ropsten: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/" + INFURA_Access_Token)
+      },
+      network_id: 3,
+      gas: 5786536
+    }  
   },
   solc: {
     optimizer: {
