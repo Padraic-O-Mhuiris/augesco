@@ -72,17 +72,8 @@ export const ContractStore = types
     exec: flow(function* exec(_id, _method, _args, _params) {
       if(self.loaded && self.contracts.has(_id)) {
         try {
-          return yield self.getMethod(_id, _method)["func"](..._args)
-          .send(_params)
-          .on('transactionHash', function(hash){
-            return hash
-          })
-          .on('confirmation', function(confirmationNumber, receipt){
-            return {confirmationNumber, receipt}
-          })
-          .on('receipt', function(receipt){
-              return receipt
-          }).on('error', console.error);
+          const tx = yield self.getMethod(_id, _method)["func"](..._args).send(_params)
+          return tx
         } catch (error){
           console.error(error)
         }

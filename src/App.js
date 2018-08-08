@@ -24,9 +24,17 @@ const contractCounter = require("../build/contracts/Counter.json")
   async handleClick2() {
     const { contractStore } = this.props
     const { web3Store } = this.props
-    console.log(await contractStore.exec("Counter", "incCount", [], {
+    const x = await contractStore.exec("Counter", "incCount", [], {
       "from": web3Store.account
-    }))
+    })
+    try {
+      if(await x.status) {
+        console.log("Transaction mined")
+        await this.handleClick1()
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   render () {
