@@ -1,5 +1,5 @@
-var Purchase = artifacts.require("./Purchase.sol");
+var Counter = artifacts.require("./Counter.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Purchase);
+  deployer.deploy(Counter, 20)
 };

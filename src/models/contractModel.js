@@ -1,4 +1,4 @@
-import { types } from 'mobx-state-tree'
+import { types, flow } from 'mobx-state-tree'
 
 export const ContractInstance = types
   .model({
@@ -6,14 +6,20 @@ export const ContractInstance = types
     abi: types.frozen(),
     txHash: types.frozen(),
     address: types.string,
-    contract: types.frozen(),
-    methods: types.optional(types.frozen(), {}),
+    contract: types.optional(types.frozen(), {}),
+    methods: types.optional(types.frozen(), {})
   })
+  .actions(self => ({
+    getMethod(_method) {
+      return self.methods[_method]
+    }
+  }))
 
 export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
-    loaded: types.boolean
+    loaded: types.boolean,
+    eth: types.optional(types.frozen(), {})
   })
   .actions(self => ({
     add(_id, _abi, _txHash, _address, _contract, _methods) {
@@ -25,6 +31,9 @@ export const ContractStore = types
           contract: _contract,
           methods:  _methods
         })
+    },
+    setEth(_eth) {
+      self.eth = _eth
     },
     delete(_id) {
       self.contracts.delete(_id)
@@ -38,7 +47,43 @@ export const ContractStore = types
       } else {
         return {}
       }      
-    }  
+    },  
+    getMethod(_id, _method) {
+      if(self.loaded && self.contracts.has(_id)) {
+        return self.use(_id).getMethod(_method)
+      } else {
+        return {}
+      }      
+    },
+    getMethodArgs(_id, _method) {
+      if(self.loaded && self.contracts.has(_id)) {
+        return self.use(_id).getMethod(_method).inputs
+      } else {
+        return {}
+      }      
+    },
+    call: flow(function* call(_id, _method, _args) {
+      if(self.loaded && self.contracts.has(_id)) {
+        try {
+          return yield self.getMethod(_id, _method)["func"](..._args).call()   
+        } catch (error){
+          console.error(error)
+        }
+      } else {
+        return undefined
+      }
+    }),
+    exec: flow(function* exec(_id, _method, _args, _params) {
+      if(self.loaded && self.contracts.has(_id)) {
+        try {
+          return yield self.getMethod(_id, _method)["func"](..._args).send(_params)
+        } catch (error){
+          console.error(error)
+        }
+      } else {
+        return undefined
+      }
+    })
   }))
   .views(self => ({
     get keys() {

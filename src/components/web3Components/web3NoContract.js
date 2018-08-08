@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import getWeb3Network from "../../utils/getWeb3Network"
 
 class Web3NoNetwork extends Component {
   render () {
@@ -9,26 +8,7 @@ class Web3NoNetwork extends Component {
         <div className="uk-section-xlarge">
           <div className="uk-container">
             <h1 className="uk-heading-line uk-text-center"><span>Wrong Network</span></h1>
-            <div className="uk-flex uk-flex-center">
-              <div>
-              <table className="uk-table uk-table-striped uk-table-small">
-                <thead>
-                  <tr>
-                      <th>Your contract was not found!</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* {this.props.data.map((item, idx) => 
-                    (
-                      <tr key={idx}>
-                        <td className="uk-text-left">{getWeb3Network(item)}</td>
-                      </tr>
-                    ))
-                  } */}
-                </tbody>
-              </table>
-              </div>
-            </div>
+            <p className="uk-text-center">Your contract was not found</p>
             <div className="uk-flex uk-flex-center">
               <span uk-icon="icon: file-edit; ratio: 10"></span>
             </div>
