@@ -24,33 +24,22 @@ const contractCounter = require("../build/contracts/Counter.json")
   async handleClick2() {
     const { contractStore } = this.props
     const { web3Store } = this.props
+    console.log(contractStore)
     const x = await contractStore.exec("Counter", "incCount", [], {
       "from": web3Store.account
     })
-    try {
-      if(await x.status) {
-        console.log("Transaction mined")
-        await this.handleClick1()
-      }
-    } catch (error) {
-      console.error(error)
-    }
+    // console.log(await x)
+    // try {
+    //   if(await x.status) {
+    //     await console.log("Transaction mined")
+    //     await this.handleClick1()
+    //   }
+    // } catch (error) {
+    //   console.error(error)
+    // }
   }
 
   render () {
-    const { contractStore } = this.props
-    const { web3Store } = this.props
-    
-    contractStore.call("Counter", "getCount", []).then(res => {
-      console.log(res)
-    })
-    
-    // console.log(contractStore.use("Counter").exec("method", [params], {
-    //   from: "",
-    //   gasPrice: "",
-    //   gas: "",
-    //   value: ""
-    // }))
     return (
       <Web3Gate 
         networks={[

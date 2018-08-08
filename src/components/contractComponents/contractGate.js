@@ -74,6 +74,7 @@ import ContractLoading from "./contractLoading"
     }
 
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
+      contractStore.setEth(web3Store.web3.eth)
       contractStore.toggleLoaded()
     }
   }

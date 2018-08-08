@@ -18,7 +18,8 @@ export const ContractInstance = types
 export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
-    loaded: types.boolean
+    loaded: types.boolean,
+    eth: types.optional(types.frozen(), {})
   })
   .actions(self => ({
     add(_id, _abi, _txHash, _address, _contract, _methods) {
@@ -30,6 +31,9 @@ export const ContractStore = types
           contract: _contract,
           methods:  _methods
         })
+    },
+    setEth(_eth) {
+      self.eth = _eth
     },
     delete(_id) {
       self.contracts.delete(_id)
@@ -73,7 +77,9 @@ export const ContractStore = types
       if(self.loaded && self.contracts.has(_id)) {
         try {
           const tx = yield self.getMethod(_id, _method)["func"](..._args).send(_params)
-          return tx
+          console.log(tx)
+          //return tx
+          
         } catch (error){
           console.error(error)
         }
