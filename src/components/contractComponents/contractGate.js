@@ -6,12 +6,26 @@ import ContractLoading from "./contractLoading"
 @inject("web3Store")
 @inject("contractStore")
 @observer class ContractGate extends Component {
+  
+  parseContractAbi(key, _abi) {
+    for(const method of _abi) {
+      if(method.name === key) {
+        return method
+      }
+    }
+    return {}
+  }
 
   parseContractMethods(_methodsWeb3, _abi) {
     const methodObj = {}
     for(const method of Object.keys(_methodsWeb3)) {
       if(/([a-z]*[()])/.test(method)) {
-        methodObj[method] = _methodsWeb3[method]
+        const obj = {}
+        const key = method.split('(')[0]
+        obj["func"] = _methodsWeb3[method]
+        const methodAbi = this.parseContractAbi(key, _abi)
+        methodAbi["func"] = _methodsWeb3[method]
+        methodObj[key] = methodAbi
       }
     }
     return methodObj
@@ -20,7 +34,7 @@ import ContractLoading from "./contractLoading"
   parseContract(_contract) {
     const { web3Store } = this.props
     const { contractStore } = this.props
-    console.log(web3Store.network)
+
     var check = true
     for(const network of Object.keys(_contract.networks)) {
       if(network === web3Store.network.toString()) {
@@ -32,7 +46,7 @@ import ContractLoading from "./contractLoading"
     if(check) {
       web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
     } else {
-
+      
       const contractName = _contract.contractName
       const contractAbi = _contract.abi
       const contractTxHash = _contract.networks[web3Store.network].transactionHash
@@ -60,6 +74,7 @@ import ContractLoading from "./contractLoading"
     }
 
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
+      contractStore.setEth(web3Store.web3.eth)
       contractStore.toggleLoaded()
     }
   }

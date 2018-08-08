@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import getWeb3 from '../utils/getWeb3'
 import { inject, observer } from "mobx-react"
-import { web3Context, netContext } from "../constants"
+import { web3Context } from "../constants"
 import Web3Loading from "./web3Components/web3Loading"
 import Web3Locked from "./web3Components/web3Locked"
 import Web3NotInstalled from "./web3Components/web3NotInstalled"
