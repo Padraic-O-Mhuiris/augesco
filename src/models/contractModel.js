@@ -19,7 +19,6 @@ export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
     loaded: types.boolean,
-    eth: types.optional(types.frozen(), {})
   })
   .actions(self => ({
     add(_id, _abi, _txHash, _address, _contract, _methods) {
@@ -31,9 +30,6 @@ export const ContractStore = types
           contract: _contract,
           methods:  _methods
         })
-    },
-    setEth(_eth) {
-      self.eth = _eth
     },
     delete(_id) {
       self.contracts.delete(_id)
