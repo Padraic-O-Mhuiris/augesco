@@ -3,16 +3,16 @@ import { netContext } from "../constants"
 export default function getWeb3Network(id) {
   switch (id) {
     case netContext.MAIN:
-      return "Main"
+      return "main"
     case netContext.MORDEN:
-      return "Morden"
+      return "morden"
     case netContext.ROPESTEN:
-      return "Ropesten"
+      return "ropesten"
     case netContext.RINKEBY:
-      return "Rinkeby"
+      return "rinkeby"
     case netContext.KOVAN:
-      return "Kovan"
+      return "kovan"
     default:
-      return "Private"
+      return "local"
   }
 }

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
-import { netContext } from "./constants"
 
 const contractCounter = require("../build/contracts/Counter.json")
 
@@ -17,13 +16,13 @@ const contractCounter = require("../build/contracts/Counter.json")
 
   async handleClick1() {
     const { contractStore } = this.props
-    console.log(await contractStore.call("Counter", "getCount", []))
+    console.log(await contractStore.call("Counter", "getCount", []))    
   }
 
   async handleClick2() {
     const { contractStore } = this.props
     const { web3Store } = this.props
-
+    
     const x = await contractStore.exec("Counter", "incCount", [], {
       "from": web3Store.account
     })
@@ -33,14 +32,14 @@ const contractCounter = require("../build/contracts/Counter.json")
   render () {
     return (
       <Web3Gate 
-        networks={[
-          netContext.LOCAL,
-          netContext.MAIN,
-          netContext.ROPESTEN
-        ]}
         contracts={[
           contractCounter
         ]}
+        event_providers={{
+          main: "wss://mainnet.infura.io/ws",
+          rinkeby: "wss://rinkeby.infura.io/ws",
+          local: "ws://127.0.0.1:8545"
+        }}
       >
         <div className='uk-container'> 
           <h1 className='uk-heading-divider uk-text-center'>Mobx truffle box</h1>

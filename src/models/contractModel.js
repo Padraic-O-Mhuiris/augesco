@@ -7,7 +7,9 @@ export const ContractInstance = types
     txHash: types.frozen(),
     address: types.string,
     contract: types.optional(types.frozen(), {}),
-    methods: types.optional(types.frozen(), {})
+    methods: types.optional(types.frozen(), {}),
+    eventContract:types.optional(types.frozen(), {}),
+    events: types.optional(types.frozen(), {})
   })
   .actions(self => ({
     getMethod(_method) {
@@ -18,17 +20,19 @@ export const ContractInstance = types
 export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
-    loaded: types.boolean,
+    loaded: types.boolean
   })
   .actions(self => ({
-    add(_id, _abi, _txHash, _address, _contract, _methods) {
+    add(_id, _abi, _txHash, _address, _contract, _methods, _eventContract, _events) {
       self.contracts.set(_id, { 
           name: _id,
           abi: _abi,
           txHash: _txHash,
           address: _address,
           contract: _contract,
-          methods:  _methods
+          methods:  _methods,
+          eventContract: _eventContract,
+          events: _events
         })
     },
     delete(_id) {
