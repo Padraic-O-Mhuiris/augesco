@@ -23,10 +23,9 @@ const contractCounter = require("../build/contracts/Counter.json")
     const { contractStore } = this.props
     const { web3Store } = this.props
     
-    const x = await contractStore.exec("Counter", "incCount", [], {
+    await contractStore.exec("Counter", "incCount", [], {
       "from": web3Store.account
     })
-    console.log(x)
   }
 
   render () {

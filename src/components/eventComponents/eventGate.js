@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
 
+
 @inject("web3Store")
 @inject("contractStore")
 @observer class EventGate extends Component {
@@ -15,8 +16,9 @@ import { inject, observer } from "mobx-react"
       .on("data", function(transaction){
         console.log(transaction);
       });
-      
-      // unsubscribes the subscription
+    
+    console.log(subscription)
+    
     subscription.unsubscribe(function(error, success){
       if(success)
           console.log('Successfully unsubscribed!');
@@ -48,6 +50,10 @@ import { inject, observer } from "mobx-react"
 
     this.pendingTransactions()
     this.newBlockHeaders()
+
+    contractStore.txEmitter.on('newTransaction', (hash) => {
+      console.log(hash)
+    })
   }
     
   

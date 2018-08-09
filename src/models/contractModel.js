@@ -8,7 +8,7 @@ export const ContractInstance = types
     address: types.string,
     contract: types.optional(types.frozen(), {}),
     methods: types.optional(types.frozen(), {}),
-    eventContract:types.optional(types.frozen(), {}),
+    eventContract: types.optional(types.frozen(), {}),
     events: types.optional(types.frozen(), {})
   })
   .actions(self => ({
@@ -20,6 +20,7 @@ export const ContractInstance = types
 export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
+    txEmitter: types.optional(types.frozen(), {}),
     loaded: types.boolean
   })
   .actions(self => ({
@@ -40,6 +41,9 @@ export const ContractStore = types
     },
     toggleLoaded() {
       self.loaded = !self.loaded
+    },
+    setEmitter(_emitter) {
+      self.txEmitter = _emitter
     },
     use(_id) {
       if(self.loaded && self.contracts.has(_id)) {
@@ -76,12 +80,16 @@ export const ContractStore = types
     exec: flow(function* exec(_id, _method, _args, _params) {
       if(self.loaded && self.contracts.has(_id)) {
         try {
-          return yield self.getMethod(_id, _method)["func"](..._args).send(_params)
+          yield self.getMethod(_id, _method)["func"](..._args)
+          .send(_params)
+          .on('transactionHash', function(hash){
+            self.txEmitter.emit('newTransaction', hash)
+          })
         } catch (error){
           console.error(error)
         }
       } else {
-        return undefined
+        console.error("Not ready")
       }
     })
   }))
