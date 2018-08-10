@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
-
+import { txStatus } from '../../constants';
 
 @inject("web3Store")
 @inject("contractStore")
@@ -49,13 +49,6 @@ import { inject, observer } from "mobx-react"
     });
   }
 
-  monitorTx(hash) {
-    const { contractStore, web3Store } = this.props
-
-    web3Store.web3.eth.getTransaction(hash).then(console.log);
-
-  }
-
   componentDidMount() {
     const { contractStore, web3Store } = this.props
     console.log(contractStore)
@@ -64,22 +57,26 @@ import { inject, observer } from "mobx-react"
     // this.pendingTransactions()
     // this.newBlockHeaders()
 
-    contractStore.txEmitter.on('txNew', (hash) => {
-      //fire transaction determination function
+    contractStore.txEmitter.on(txStatus.NEW, (hash) => {
       console.log("Transaction Hash", hash)
-      const obj = {...this.state.intervalObj}
-      obj[hash] = setInterval(() => this.monitorTx(hash), 1000);
-
-      this.setState({
-        intervalObj: obj
-      })
     })
 
-    contractStore.txEmitter.on('txComplete', async (receipt) => {
-      console.log("Transaction Receipt", receipt)
-      console.log(await contractStore.call("Counter", "getCount", []))
-      clearInterval(this.state.intervalObj[receipt.transactionHash])
+    contractStore.txEmitter.on(txStatus.PENDING, (data) => {
+      console.log("Transaction Pending", data)
     })
+
+    contractStore.txEmitter.on(txStatus.MINED, (data) => {
+      console.log("Transaction Mined", data)
+    })
+
+    contractStore.txEmitter.on(txStatus.FAILED, (data) => {
+      console.log("Transaction Failed", data)
+    })
+
+    contractStore.txEmitter.on(txStatus.SUCCESS, (data) => {
+      console.log("Transaction Success", data)
+    })
+
   }
     
   

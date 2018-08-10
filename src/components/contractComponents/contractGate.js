@@ -95,6 +95,7 @@ const EventEmitter = require('events')
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
       const txEmitter = new EventEmitter()
       contractStore.setEmitter(txEmitter)
+      contractStore.setWeb3(web3Store.web3)
       contractStore.toggleLoaded()
     }
   }

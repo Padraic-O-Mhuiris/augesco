@@ -1,4 +1,5 @@
-import { types, flow } from 'mobx-state-tree'
+import { types, getRoot, flow } from 'mobx-state-tree'
+import { txStatus } from "../constants"
 
 export const ContractInstance = types
   .model({
@@ -17,10 +18,110 @@ export const ContractInstance = types
     }
   }))
 
+export const transactionInstance = types
+  .model({
+    hash: types.identifier,
+    receipt: types.optional(types.frozen(), {}),
+    interval: types.optional(types.frozen(), {}),
+    status: types.enumeration(
+      [
+        txStatus.PENDING,
+        txStatus.MINED,
+        txStatus.FAILED,
+        txStatus.SUCCESS
+      ]
+    )
+  })
+  .actions(self => ({
+    addReceipt(_receipt) {
+      self.receipt = _receipt
+    },
+    updateStatus(_status) {
+      if(self.status !== txStatus.FAILED && self.status !== txStatus.SUCCESS) {
+        self.status = _status
+      }
+    },
+    txStart() {
+      getRoot(self).txEmitter.emit(txStatus.NEW, self.hash)
+      self.interval = setInterval(() => self.monitorTx(self.hash), 1000)
+    },
+    txEnd() {
+      clearInterval(self.interval)
+    },
+    monitorTx(hash) {
+      switch (self.status) {
+        case txStatus.PENDING:
+          getRoot(self).web3.eth.getTransaction(hash).then((res) => {
+            console.log(txStatus.PENDING)
+            self.emitPending(res)
+            if(res.blockNumber !== null) {
+              self.updateStatus(txStatus.MINED)
+            }
+          });
+          break;
+        
+        case txStatus.MINED:
+          getRoot(self).web3.eth.getTransactionReceipt(hash).then((res) => {
+            if(res !== null) {
+              console.log(txStatus.MINED)
+              self.emitMined(res)
+              if(res.status === '0x0') {
+                self.updateStatus(txStatus.FAILED)
+              }
+              if(res.status === '0x1') {
+                self.updateStatus(txStatus.SUCCESS)
+              }
+            }
+          });
+          break;
+        
+        case txStatus.FAILED:
+          getRoot(self).web3.eth.getTransactionReceipt(hash).then((res) => {
+            console.log(txStatus.FAILED)
+            self.addReceipt(res)
+            self.emitFailed(res)
+            self.txEnd()
+          });
+          break;
+        
+        case txStatus.SUCCESS:
+          getRoot(self).web3.eth.getTransactionReceipt(hash).then((res) => {
+            console.log(txStatus.SUCCESS)
+            self.addReceipt(res)
+            self.emitSuccess(res)
+            self.txEnd()
+          });
+          break;
+
+        default:
+          self.txEnd()
+          break;
+      }
+
+      if(self.status === txStatus.PENDING) {
+        
+      }
+    },
+    emitPending(txData) {
+      getRoot(self).txEmitter.emit(txStatus.PENDING, txData)
+    },
+    emitMined(txData) {
+      getRoot(self).txEmitter.emit(txStatus.MINED, txData)
+    },
+    emitFailed(txData) {
+      getRoot(self).txEmitter.emit(txStatus.FAILED, txData)
+    },
+    emitSuccess(txData) {
+      getRoot(self).txEmitter.emit(txStatus.SUCCESS, txData)
+    }
+  }))
+
 export const ContractStore = types
   .model({
     contracts: types.map(ContractInstance),
+    transactions: types.map(transactionInstance),
     txEmitter: types.optional(types.frozen(), {}),
+    web3: types.optional(types.frozen(), {}),
     loaded: types.boolean
   })
   .actions(self => ({
@@ -45,13 +146,16 @@ export const ContractStore = types
     setEmitter(_emitter) {
       self.txEmitter = _emitter
     },
+    setWeb3(_web3) {
+      self.web3 = _web3
+    },
     use(_id) {
       if(self.loaded && self.contracts.has(_id)) {
         return self.contracts.get(_id)
       } else {
         return {}
       }      
-    },  
+    },
     getMethod(_id, _method) {
       if(self.loaded && self.contracts.has(_id)) {
         return self.use(_id).getMethod(_method)
@@ -65,6 +169,23 @@ export const ContractStore = types
       } else {
         return {}
       }      
+    },
+    createTx(_id) {
+      self.transactions.set(_id, {
+        hash: _id,
+        receipt: {},
+        status: txStatus.PENDING
+      })
+    },
+    useTx(_id) {
+      if(self.loaded && self.transactions.has(_id)) {
+        return self.transactions.get(_id)
+      } else {
+        return {}
+      } 
+    },
+    startTx(_id) {
+      self.useTx(_id).txStart()
     },
     call: flow(function* call(_id, _method, _args) {
       if(self.loaded && self.contracts.has(_id)) {
@@ -83,10 +204,8 @@ export const ContractStore = types
           yield self.getMethod(_id, _method)["func"](..._args)
           .send(_params)
           .on('transactionHash', function(hash){
-            self.txEmitter.emit('txNew', hash)
-          })
-          .on('receipt', function(receipt){
-            self.txEmitter.emit('txComplete', receipt)
+            self.createTx(hash)
+            self.startTx(hash)
           })
         } catch (error){
           console.error(error)
