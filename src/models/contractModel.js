@@ -83,7 +83,10 @@ export const ContractStore = types
           yield self.getMethod(_id, _method)["func"](..._args)
           .send(_params)
           .on('transactionHash', function(hash){
-            self.txEmitter.emit('newTransaction', hash)
+            self.txEmitter.emit('txNew', hash)
+          })
+          .on('receipt', function(receipt){
+            self.txEmitter.emit('txComplete', receipt)
           })
         } catch (error){
           console.error(error)

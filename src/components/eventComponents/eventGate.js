@@ -48,11 +48,18 @@ import { inject, observer } from "mobx-react"
     console.log(contractStore)
     console.log(web3Store)
 
-    this.pendingTransactions()
-    this.newBlockHeaders()
+    // this.pendingTransactions()
+    // this.newBlockHeaders()
 
-    contractStore.txEmitter.on('newTransaction', (hash) => {
-      console.log(hash)
+    contractStore.txEmitter.on('txNew', (hash) => {
+      //fire transaction determination function
+      console.log("Transaction Hash", hash)
+    })
+
+    contractStore.txEmitter.on('txComplete', async (receipt) => {
+      //fire transaction determination function
+      console.log("Transaction Receipt", receipt)
+      console.log(await contractStore.call("Counter", "getCount", []))
     })
   }
     
