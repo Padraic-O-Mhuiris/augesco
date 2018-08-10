@@ -5,7 +5,13 @@ import { inject, observer } from "mobx-react"
 @inject("web3Store")
 @inject("contractStore")
 @observer class EventGate extends Component {
-  
+  constructor(props) {
+    super(props)
+    this.state = {
+      intervalObj: {}
+    }
+  }
+
   pendingTransactions() {
     const { web3Store } = this.props
 
@@ -43,6 +49,10 @@ import { inject, observer } from "mobx-react"
     });
   }
 
+  monitorTx(hash) {
+    console.log(hash)
+  }
+
   componentDidMount() {
     const { contractStore, web3Store } = this.props
     console.log(contractStore)
@@ -54,12 +64,19 @@ import { inject, observer } from "mobx-react"
     contractStore.txEmitter.on('txNew', (hash) => {
       //fire transaction determination function
       console.log("Transaction Hash", hash)
+      const obj = {...this.state.intervalObj}
+      obj[hash] = setInterval(() => this.monitorTx(hash), 1000);
+
+      this.setState({
+        intervalObj: obj
+      })
+      console.log(window)
     })
 
     contractStore.txEmitter.on('txComplete', async (receipt) => {
-      //fire transaction determination function
       console.log("Transaction Receipt", receipt)
       console.log(await contractStore.call("Counter", "getCount", []))
+      clearInterval(this.state.intervalObj[receipt.transactionHash])
     })
   }
     
