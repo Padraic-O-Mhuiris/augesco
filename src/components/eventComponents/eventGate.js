@@ -50,7 +50,10 @@ import { inject, observer } from "mobx-react"
   }
 
   monitorTx(hash) {
-    console.log(hash)
+    const { contractStore, web3Store } = this.props
+
+    web3Store.web3.eth.getTransaction(hash).then(console.log);
+
   }
 
   componentDidMount() {
@@ -70,7 +73,6 @@ import { inject, observer } from "mobx-react"
       this.setState({
         intervalObj: obj
       })
-      console.log(window)
     })
 
     contractStore.txEmitter.on('txComplete', async (receipt) => {

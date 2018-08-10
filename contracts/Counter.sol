@@ -28,22 +28,22 @@ contract Counter {
     
     function incCount() public {
         require(count < (2**256 - 1));
-        count += 1;
+        count = count + 1;
         emit Increment(count, msg.sender);
     }
     
     function decCount() public {
         require(count > 0);
-        count -= 1;
+        count = count - 1;
         emit Decrement(count, msg.sender);
     }
     
     function changeCount(uint newCount) public {
         require(newCount > 0);
         require(newCount < (2**256 - 1));
-        uint oldCount = count;
+        emit CountChange(count, newCount, msg.sender);
         count = newCount;
-        emit CountChange(oldCount, newCount, msg.sender);
+        
     }
     
     function getCount() public view returns (uint){
