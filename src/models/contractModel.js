@@ -97,10 +97,6 @@ export const transactionInstance = types
           self.txEnd()
           break;
       }
-
-      if(self.status === txStatus.PENDING) {
-        
-      }
     },
     emitPending(txData) {
       getRoot(self).txEmitter.emit(txStatus.PENDING, txData)
@@ -213,8 +209,15 @@ export const ContractStore = types
       } else {
         console.error("Not ready")
       }
-    })
-  }))
+    }),
+    listen(_id, _event, args, cb) {
+      if(self.loaded && self.contracts.has(_id)) {
+        self.use(_id).events[_event](...args, cb)
+      } else {
+        console.error("Not ready")
+      }}
+    }
+  ))
   .views(self => ({
     get keys() {
       return Array.from(self.contracts.keys())

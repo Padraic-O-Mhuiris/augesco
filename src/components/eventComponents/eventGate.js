@@ -49,7 +49,7 @@ import { txStatus } from '../../constants';
     });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { contractStore, web3Store } = this.props
     console.log(contractStore)
     console.log(web3Store)
@@ -77,9 +77,23 @@ import { txStatus } from '../../constants';
       console.log("Transaction Success", data)
     })
 
+    // contractStore.use("Counter").events.Increment({}, (err, events) => {
+    //   console.log("Increment", events)
+    // })
+
+    // contractStore.use("Counter").events.Decrement({}, (err, events) => {
+    //   console.log("Decrement", events)
+    // })
+
+    // contractStore.use("Counter").events.CountChange({}, (err, events) => {
+    //   console.log("CountChange", events)
+    // })
+    
+    contractStore.listen("Counter", "Increment", {}, ((err, event) => {
+      console.log(event)
+    }))
   }
     
-  
   render () {
     return (
       <div>
