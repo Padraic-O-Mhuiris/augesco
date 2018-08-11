@@ -4,6 +4,8 @@ import { web3Context } from "../../constants"
 import ContractLoading from "./contractLoading"
 import EventGate from "../eventComponents/eventGate"
 
+const EventEmitter = require('events')
+
 @inject("web3Store")
 @inject("contractStore")
 @observer class ContractGate extends Component {
@@ -91,6 +93,9 @@ import EventGate from "../eventComponents/eventGate"
     }
 
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
+      const txEmitter = new EventEmitter()
+      contractStore.setEmitter(txEmitter)
+      contractStore.setWeb3(web3Store.web3)
       contractStore.toggleLoaded()
     }
   }

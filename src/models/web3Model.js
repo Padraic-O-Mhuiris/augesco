@@ -3,6 +3,9 @@ import { web3Context } from "../constants"
 import { BigNumber } from 'bignumber.js';
 import getWeb3Network from "../utils/getWeb3Network"
 
+let ptx = null
+let nbh = null
+
 export const Web3Store = types
   .model({
     account: types.optional(types.string, ""),
@@ -30,7 +33,7 @@ export const Web3Store = types
     },
     setAccount(_account) {
       self.account = _account
-      self.updateStatus("LOADED")
+      self.updateStatus(web3Context.WEB3_LOADED)
     },
     updateStatus(_status) {
       self.status = _status
@@ -47,7 +50,23 @@ export const Web3Store = types
       } catch (error) {
         self.updateStatus(web3Context.WEB3_NET_ERR)
       }
-    })
+    }),
+    startPendingTxs(_cb) {
+      if(self.status === web3Context.WEB3_LOADED) {
+        ptx = self.eventWeb3.eth.subscribe('pendingTransactions', _cb)
+      }
+    },
+    stopPendingTxs(_cb) {
+      ptx.unsubscribe(_cb)
+    },
+    startNewBlocks(_cb) {
+      if(self.status === web3Context.WEB3_LOADED) {
+        nbh = self.eventWeb3.eth.subscribe('newBlockHeaders', _cb)
+      }
+    },
+    stopNewBlocks(_cb) {
+      nbh.unsubscribe(_cb)
+    },
   }))
   .views(self => ({
     get instance() {
