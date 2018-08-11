@@ -15,6 +15,10 @@ const contractCounter = require("../build/contracts/Counter.json")
     this.handleClick3 = this.handleClick3.bind(this)
     this.handleClick4 = this.handleClick4.bind(this)
     this.handleClick5 = this.handleClick5.bind(this)
+    this.handleClick6 = this.handleClick6.bind(this)
+    this.handleClick7 = this.handleClick7.bind(this)
+    this.handleClick8 = this.handleClick8.bind(this)
+    this.handleClick9 = this.handleClick9.bind(this)
   }
 
   async handleClick1() {
@@ -57,6 +61,34 @@ const contractCounter = require("../build/contracts/Counter.json")
     })
   }
 
+  async handleClick6() {
+    const { web3Store } = this.props
+    web3Store.startPendingTxs((err, result) => {
+      console.log(result)
+    })
+  }
+
+  async handleClick7() {
+    const { web3Store } = this.props
+    web3Store.stopPendingTxs((err, result) => {
+      console.log(result)
+    })
+  }
+
+  async handleClick8() {
+    const { web3Store } = this.props
+    web3Store.startNewBlocks((err, result) => {
+      console.log(result)
+    })
+  }
+
+  async handleClick9() {
+    const { web3Store } = this.props
+    web3Store.stopNewBlocks((err, result) => {
+      console.log(result)
+    })
+  }
+
   render () {
     return (
       <Web3Gate 
@@ -80,7 +112,14 @@ const contractCounter = require("../build/contracts/Counter.json")
           <button className="uk-button uk-button-default" onClick={this.handleClick4}>Decrement Count</button>
           <br/>
           <button className="uk-button uk-button-default" onClick={this.handleClick5}>Reset Count</button>
-
+          <br/>
+          <button className="uk-button uk-button-default" onClick={this.handleClick6}>Start Pending Transactions</button>
+          <br/>
+          <button className="uk-button uk-button-default" onClick={this.handleClick7}>Stop Pending Transactions</button>
+          <br/>
+          <button className="uk-button uk-button-default" onClick={this.handleClick8}>Start New Blocks</button>
+          <br/>
+          <button className="uk-button uk-button-default" onClick={this.handleClick9}>Stop New Blocks</button>
           <br/>
         </div>
       </Web3Gate>
