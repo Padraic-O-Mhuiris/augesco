@@ -30,7 +30,7 @@ export const Web3Store = types
     },
     setAccount(_account) {
       self.account = _account
-      self.updateStatus("LOADED")
+      self.updateStatus(web3Context.WEB3_LOADED)
     },
     updateStatus(_status) {
       self.status = _status

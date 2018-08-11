@@ -52,7 +52,6 @@ export const transactionInstance = types
       switch (self.status) {
         case txStatus.PENDING:
           getRoot(self).web3.eth.getTransaction(hash).then((res) => {
-            console.log(txStatus.PENDING)
             self.emitPending(res)
             if(res.blockNumber !== null) {
               self.updateStatus(txStatus.MINED)
@@ -63,7 +62,6 @@ export const transactionInstance = types
         case txStatus.MINED:
           getRoot(self).web3.eth.getTransactionReceipt(hash).then((res) => {
             if(res !== null) {
-              console.log(txStatus.MINED)
               self.emitMined(res)
               if(res.status === '0x0') {
                 self.updateStatus(txStatus.FAILED)
@@ -77,7 +75,6 @@ export const transactionInstance = types
         
         case txStatus.FAILED:
           getRoot(self).web3.eth.getTransactionReceipt(hash).then((res) => {
-            console.log(txStatus.FAILED)
             self.addReceipt(res)
             self.emitFailed(res)
             self.txEnd()
@@ -86,7 +83,6 @@ export const transactionInstance = types
         
         case txStatus.SUCCESS:
           getRoot(self).web3.eth.getTransactionReceipt(hash).then((res) => {
-            console.log(txStatus.SUCCESS)
             self.addReceipt(res)
             self.emitSuccess(res)
             self.txEnd()

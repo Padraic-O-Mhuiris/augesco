@@ -76,18 +76,6 @@ import { txStatus } from '../../constants';
     contractStore.txEmitter.on(txStatus.SUCCESS, (data) => {
       console.log("Transaction Success", data)
     })
-
-    // contractStore.use("Counter").events.Increment({}, (err, events) => {
-    //   console.log("Increment", events)
-    // })
-
-    // contractStore.use("Counter").events.Decrement({}, (err, events) => {
-    //   console.log("Decrement", events)
-    // })
-
-    // contractStore.use("Counter").events.CountChange({}, (err, events) => {
-    //   console.log("CountChange", events)
-    // })
     
     contractStore.listen("Counter", "Increment", {}, ((err, event) => {
       console.log(event)
