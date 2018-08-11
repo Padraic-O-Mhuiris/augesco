@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
-import { web3Context} from "../../constants"
+import { web3Context } from "../../constants"
 import ContractLoading from "./contractLoading"
+import EventGate from "../eventComponents/eventGate"
+
+const EventEmitter = require('events')
 
 @inject("web3Store")
 @inject("contractStore")
@@ -14,6 +17,16 @@ import ContractLoading from "./contractLoading"
       }
     }
     return {}
+  }
+
+  parseContractEvents(_eventsWeb3) {
+    const eventObj = {}
+    for(const event of Object.keys(_eventsWeb3)) {
+      if(/(^[a-zA-Z]+$)/.test(event)) {
+        eventObj[event] = _eventsWeb3[event]
+      }
+    }
+    return eventObj
   }
 
   parseContractMethods(_methodsWeb3, _abi) {
@@ -51,16 +64,22 @@ import ContractLoading from "./contractLoading"
       const contractAbi = _contract.abi
       const contractTxHash = _contract.networks[web3Store.network].transactionHash
       const contractAddress = _contract.networks[web3Store.network].address
+      
       const contractWeb3 = new web3Store.web3.eth.Contract(contractAbi, contractAddress)
       const contractMethods = this.parseContractMethods(contractWeb3.methods, contractAbi)
-      
+
+      const eventContract = new web3Store.eventWeb3.eth.Contract(contractAbi, contractAddress)
+      const contractEvents = this.parseContractEvents(eventContract.events)
+
       contractStore.add(
         contractName,
         contractAbi,
         contractTxHash,
         contractAddress,
         contractWeb3,
-        contractMethods
+        contractMethods,
+        eventContract,
+        contractEvents
       )
     }
   }
@@ -74,19 +93,20 @@ import ContractLoading from "./contractLoading"
     }
 
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
-      contractStore.setEth(web3Store.web3.eth)
+      const txEmitter = new EventEmitter()
+      contractStore.setEmitter(txEmitter)
+      contractStore.setWeb3(web3Store.web3)
       contractStore.toggleLoaded()
     }
   }
   
   render () {
     const { contractStore } = this.props
-
     if(contractStore.loaded) {
       return (
-        <div>
+        <EventGate>
           {this.props.children}
-        </div>
+        </EventGate>
       )
     } else {
       return (

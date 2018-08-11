@@ -17,3 +17,10 @@ export const netContext = {
   LOCAL: -1
 }
 
+export const txStatus = {
+  NEW: "TX_NEW",
+  PENDING: "TX_PENDING",
+  MINED: "TX_MINED",
+  FAILED: "TX_FAILED",
+  SUCCESS: "TX_SUCCESS"
+}

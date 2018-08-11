@@ -28,7 +28,6 @@ const web3Store = Web3Store.create({
 const contractStore = ContractStore.create({
   contracts: {},
   loaded: false,
-  eth: {}
 })
 
 const app = (
