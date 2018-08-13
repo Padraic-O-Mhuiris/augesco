@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
 import { txStatus } from '../../constants';
-import UIkit from 'uikit'
 
 const etherscan = {
   1: "https://etherscan.io/tx/",
@@ -33,47 +32,22 @@ const txMessage = (_msg, _link) => (
     const weblink = etherscan[web3Store.network]
 
     contractStore.txEmitter.on(txStatus.NEW, (hash) => {
-      UIkit.notification({
-        message: txMessage("TX: " + hash.substring(0, 6) + " started", weblink+hash),
-        pos: 'bottom-right',
-        status: 'primary',
-        timeout: 10000,
-      })
+      
 
       contractStore.txEmitter.once(txStatus.PENDING+hash, (data) => {
-        UIkit.notification({
-          message: txMessage("TX: " + hash.substring(0, 6) + " pending", weblink+hash),
-          pos: 'bottom-right',
-          status: 'primary',
-          timeout: 25000,
-        })
+        
       })
 
       contractStore.txEmitter.on(txStatus.MINED+hash, (data) => {
-        UIkit.notification({
-          message: txMessage("TX: " + hash.substring(0, 6) + " mined", weblink+hash),
-          pos: 'bottom-right',
-          status: 'warning',
-          timeout: 10000,
-        })
+        
       })
 
       contractStore.txEmitter.on(txStatus.FAILED+hash, (data) => {
-        UIkit.notification({
-          message: txMessage("TX: " + hash.substring(0, 6) + " failed", weblink+hash),
-          pos: 'bottom-right',
-          status: 'danger',
-          timeout: 10000,
-        })
+        
       })
   
       contractStore.txEmitter.on(txStatus.SUCCESS+hash, (data) => {
-        UIkit.notification({
-          message: txMessage("TX: " + hash.substring(0, 6) + " success", weblink+hash),
-          pos: 'bottom-right',
-          status: 'success',
-          timeout: 10000,
-        })
+        
       })
     })
 
