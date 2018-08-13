@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
+import "./assets/less/index"
+import { Layout, Menu, Breadcrumb, Button, Row, Col, Card } from 'antd';
+
+const { Header, Footer, Content } = Layout;
 
 const contractCounter = require("../build/contracts/Counter.json")
 
@@ -101,27 +105,95 @@ const contractCounter = require("../build/contracts/Counter.json")
           local: "ws://127.0.0.1:8545"
         }}
       >
-        <div className='uk-container'> 
-          <h1 className='uk-heading-divider uk-text-center'>Mobx truffle box</h1>
-          <button className="uk-button uk-button-default" onClick={this.handleClick1}>Get Count</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick2}>Increment Count</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick3}>Change count to -1</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick4}>Decrement Count</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick5}>Reset Count</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick6}>Start Pending Transactions</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick7}>Stop Pending Transactions</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick8}>Start New Blocks</button>
-          <br/>
-          <button className="uk-button uk-button-default" onClick={this.handleClick9}>Stop New Blocks</button>
-          <br/>
-        </div>
+        <Layout className="layout">
+          <Header>
+            <div className="logo" />
+            <Menu
+              theme="dark"
+              mode="horizontal"
+              style={{ lineHeight: '64px' }}
+            >
+            </Menu>
+          </Header>
+          <Content style={{ padding: '0 50px' }}>
+            <Breadcrumb style={{ margin: '16px 0' }}>
+            </Breadcrumb>
+            
+            <div style={{ background: '#ECECEC', padding: '30px' }}>
+              <h1>Mobx State Tree Truffle Box</h1>
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Card title="Get Count" bordered={false}
+                  extra={ <Button onClick={this.handleClick1}>Get Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                  </Card>
+                </Col>
+
+                <Col span={8}>
+                  <Card title="Increment Count" bordered={false}
+                  extra={ <Button onClick={this.handleClick2}>Increment Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nis</p>
+                  </Card>
+                </Col>
+
+                <Col span={8}>
+                  <Card title="Fail Count" bordered={false}
+                  extra={ <Button onClick={this.handleClick3}>Fail Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mi</p>
+                  </Card>
+                </Col>               
+              </Row>
+
+              <br /><br />
+              
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Card title="Decrement Count" bordered={false}
+                  extra={ <Button onClick={this.handleClick4}>Get Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip </p>
+                  </Card>
+                </Col>
+
+                <Col span={8}>
+                  <Card title="Reset Count" bordered={false}
+                  extra={ <Button onClick={this.handleClick5}>Reset Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                  </Card>
+                </Col>
+
+                <Col span={8}>
+                  <Card title="Pending Transactions" bordered={false}
+                  extra={ 
+                    <div>
+                      <Button onClick={this.handleClick6}>Start</Button>&nbsp;
+                      <Button onClick={this.handleClick7}>Stop</Button>
+                    </div>
+                  }>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                  </Card>
+                </Col>               
+              </Row>
+
+              <br /><br />
+              
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Card title="New Blocks" bordered={false}
+                  extra={
+                    <div>
+                      <Button onClick={this.handleClick8}>Start</Button>&nbsp;
+                      <Button onClick={this.handleClick9}>Stop</Button>
+                    </div>
+                  }>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip</p>
+                  </Card>
+                </Col>    
+              </Row>
+            </div>
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>
+          </Footer>
+        </Layout>
       </Web3Gate>
     )
   }

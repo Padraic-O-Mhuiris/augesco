@@ -117,7 +117,7 @@ import Web3 from 'web3'
   }
   
   componentDidUpdate() {
-    
+    console.log(this.props.web3Store.status)
     if(this.state.web3 !== null) {
       this.props.web3Store.setWeb3(this.state.web3)
       this.instantiateWeb3()

@@ -95,16 +95,19 @@ export const transactionInstance = types
       }
     },
     emitPending(txData) {
-      getRoot(self).txEmitter.emit(txStatus.PENDING, txData)
+      console.log(txData)
+      getRoot(self).txEmitter.emit(txStatus.PENDING+txData.hash, txData)
     },
     emitMined(txData) {
-      getRoot(self).txEmitter.emit(txStatus.MINED, txData)
+      console.log(txData)
+
+      getRoot(self).txEmitter.emit(txStatus.MINED+txData.transactionHash, txData)
     },
     emitFailed(txData) {
-      getRoot(self).txEmitter.emit(txStatus.FAILED, txData)
+      getRoot(self).txEmitter.emit(txStatus.FAILED+txData.transactionHash, txData)
     },
     emitSuccess(txData) {
-      getRoot(self).txEmitter.emit(txStatus.SUCCESS, txData)
+      getRoot(self).txEmitter.emit(txStatus.SUCCESS+txData.transactionHash, txData)
     }
   }))
 
