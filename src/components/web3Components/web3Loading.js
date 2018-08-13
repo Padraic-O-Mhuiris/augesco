@@ -1,20 +1,18 @@
 import React, { Component } from 'react'
+import { Layout, Spin, Row, Col, Icon } from 'antd';
 
 class Web3Loading extends Component {
   render () {
     return (
-      <div uk-height-viewport="expand: true">
-        <div className="uk-section-small"></div>
-        <div className="uk-section-xlarge">
-          <div className="uk-container">
-            <h1 className="uk-heading-line uk-text-center"><span>Loading web3</span></h1>
-            <br/>
-            <div className="uk-flex uk-flex-center">
-              <div uk-spinner="ratio: 8"></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Layout>
+        <Row type="flex" align="middle">
+  <Col>
+    <div style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center'}}>
+      <Icon type="play-circle-o" style={{ display: 'inline-block', verticalAlign: 'middle' }} />
+    </div>
+  </Col>
+</Row>
+      </Layout>
     )
   }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Web3Gate from "./components/web3Gate"
-import './App.css';
 import { inject, observer } from "mobx-react"
+import "./assets/less/index"
 import { Layout, Menu, Breadcrumb, Button, Row, Col, Card } from 'antd';
 
 const { Header, Footer, Content } = Layout;
@@ -188,6 +188,7 @@ const contractCounter = require("../build/contracts/Counter.json")
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
                   </Card>
                 </Col>    
+                <Button type="primary">Primary</Button>
               </Row>
             </div>
           </Content>

@@ -15,15 +15,6 @@ const txMessage = (_msg, _link) => (
 @inject("web3Store")
 @inject("contractStore")
 @observer class EventGate extends Component {
-  constructor(props) {
-    super(props)
-
-    this.handleClick = this.handleClick.bind(this)
-  }
-
-  async handleClick() {
-    txMessage("New TX",etherscan[3]+"0x0157c358b082069206648941e41509e8ae82359312aee134078babd0e37d47ae", "bottom-right", "secondary") 
-  }
 
   componentDidMount() {
     const { contractStore, web3Store } = this.props
@@ -60,7 +51,6 @@ const txMessage = (_msg, _link) => (
     return (
       <div>
         {this.props.children}
-        <button className="uk-button uk-button-default" onClick={this.handleClick}>Event Test</button>
       </div>
     )
   }
