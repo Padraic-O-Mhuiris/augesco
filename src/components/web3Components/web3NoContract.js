@@ -20,6 +20,7 @@ class Web3NoContract extends Component {
               <Col className="barrier-content" span={20}>
 
                 <h1>No contract detected on this network</h1>
+                <p>Please switch to appropriate network</p>
                 <br /><br />
                 {antIcon}
                 

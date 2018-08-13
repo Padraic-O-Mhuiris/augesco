@@ -20,6 +20,7 @@ class Web3Loading extends Component {
               <Col className="barrier-content" span={20}>
 
                 <h1>MetaMask is attempting to find network</h1>
+                <p>Ensure websocket provider is present!</p>
                 <br /><br />
                 <Spin indicator={antIcon} />
                 
