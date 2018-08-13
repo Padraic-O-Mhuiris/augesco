@@ -3,63 +3,80 @@ import { inject, observer } from "mobx-react"
 import { txStatus } from '../../constants';
 import UIkit from 'uikit'
 
+const etherscan = {
+  1: "https://etherscan.io/tx/",
+  3: "https://ropesten.etherscan.io/tx/",
+  4: "https://rinkeby.etherscan.io/tx/"
+}
+
+const txMessage = (_msg, _link) => (
+  "<a target=\"_blank\" rel=\"noopener noreferrer\" href=" + _link+ ">" + _msg + "</a>"
+)
+
 @inject("web3Store")
 @inject("contractStore")
 @observer class EventGate extends Component {
+  constructor(props) {
+    super(props)
+
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  async handleClick() {
+    txMessage("New TX",etherscan[3]+"0x0157c358b082069206648941e41509e8ae82359312aee134078babd0e37d47ae", "bottom-right", "secondary") 
+  }
 
   componentDidMount() {
     const { contractStore, web3Store } = this.props
     console.log(contractStore)
     console.log(web3Store)
-
-    // this.newBlockHeaders()
+    const weblink = etherscan[web3Store.network]
 
     contractStore.txEmitter.on(txStatus.NEW, (hash) => {
-      console.log("Transaction Hash", hash)
       UIkit.notification({
-        message: 'New Transaction',
+        message: txMessage("TX: " + hash.substring(0, 6) + " started", weblink+hash),
         pos: 'bottom-right',
-        status: 'secondary'
+        status: 'primary',
+        timeout: 10000,
       })
 
-    })
+      contractStore.txEmitter.once(txStatus.PENDING+hash, (data) => {
+        UIkit.notification({
+          message: txMessage("TX: " + hash.substring(0, 6) + " pending", weblink+hash),
+          pos: 'bottom-right',
+          status: 'primary',
+          timeout: 25000,
+        })
+      })
 
-    contractStore.txEmitter.on(txStatus.PENDING, (data) => {
-      console.log("Transaction Pending", data)
-      UIkit.notification({
-        message: 'Transaction Pending',
-        pos: 'bottom-right',
-        status: 'secondary'
+      contractStore.txEmitter.on(txStatus.MINED+hash, (data) => {
+        UIkit.notification({
+          message: txMessage("TX: " + hash.substring(0, 6) + " mined", weblink+hash),
+          pos: 'bottom-right',
+          status: 'warning',
+          timeout: 10000,
+        })
+      })
+
+      contractStore.txEmitter.on(txStatus.FAILED+hash, (data) => {
+        UIkit.notification({
+          message: txMessage("TX: " + hash.substring(0, 6) + " failed", weblink+hash),
+          pos: 'bottom-right',
+          status: 'danger',
+          timeout: 10000,
+        })
+      })
+  
+      contractStore.txEmitter.on(txStatus.SUCCESS+hash, (data) => {
+        UIkit.notification({
+          message: txMessage("TX: " + hash.substring(0, 6) + " success", weblink+hash),
+          pos: 'bottom-right',
+          status: 'success',
+          timeout: 10000,
+        })
       })
     })
 
-    contractStore.txEmitter.on(txStatus.MINED, (data) => {
-      console.log("Transaction Mined", data)
-      UIkit.notification({
-        message: 'Transaction Mined',
-        pos: 'bottom-right',
-        status: 'primary'
-      })
-    })
-
-    contractStore.txEmitter.on(txStatus.FAILED, (data) => {
-      console.log("Transaction Failed", data)
-      UIkit.notification({
-        message: 'Transaction Failed',
-        pos: 'bottom-right',
-        status: 'danger'
-      })
-    })
-
-    contractStore.txEmitter.on(txStatus.SUCCESS, (data) => {
-      console.log("Transaction Success", data)
-      UIkit.notification({
-        message: 'Transaction Success',
-        pos: 'bottom-right',
-        status: 'success'
-      })
-    })
-    
     contractStore.listen("Counter", "Increment", {}, ((err, event) => {
       console.log(event)
     }))
@@ -69,6 +86,7 @@ import UIkit from 'uikit'
     return (
       <div>
         {this.props.children}
+        <button className="uk-button uk-button-default" onClick={this.handleClick}>Event Test</button>
       </div>
     )
   }
