@@ -95,12 +95,9 @@ export const transactionInstance = types
       }
     },
     emitPending(txData) {
-      console.log(txData)
       getRoot(self).txEmitter.emit(txStatus.PENDING+txData.hash, txData)
     },
     emitMined(txData) {
-      console.log(txData)
-
       getRoot(self).txEmitter.emit(txStatus.MINED+txData.transactionHash, txData)
     },
     emitFailed(txData) {

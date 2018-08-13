@@ -19,8 +19,6 @@ const txMessage = (_msg, _link) => (
 
   componentDidMount() {
     const { contractStore, web3Store } = this.props
-    console.log(contractStore)
-    console.log(web3Store)
     const weblink = etherscan[web3Store.network]
 
     contractStore.txEmitter.on(txStatus.NEW, (hash) => {
