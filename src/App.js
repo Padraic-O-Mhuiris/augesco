@@ -120,7 +120,7 @@ const contractCounter = require("../build/contracts/Counter.json")
             </Breadcrumb>
             
             <div style={{ background: '#ECECEC', padding: '30px' }}>
-              <h1>Mobx State Tree Truffle Box</h1>
+              <h1>Augesco</h1>
               <Row gutter={16}>
                 <Col span={8}>
                   <Card title="Get Count" bordered={false}
