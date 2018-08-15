@@ -94,9 +94,13 @@ const EventEmitter = require('events')
 
     if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
       const txEmitter = new EventEmitter()
+      txEmitter.setMaxListeners(100)
+      web3Store.setEmitter(txEmitter)
       contractStore.setEmitter(txEmitter)
       contractStore.setWeb3(web3Store.web3)
       contractStore.toggleLoaded()
+
+      web3Store.startNewBlocks()
     }
   }
   

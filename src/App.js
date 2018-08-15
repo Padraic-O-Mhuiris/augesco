@@ -3,11 +3,12 @@ import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
 import "./assets/less/index"
 import Logo from "./assets/images/icons/ethereum.png"
-import { Layout, Menu, Breadcrumb, Button, Row, Col, Card, notification, Icon } from 'antd';
+import { Layout, Breadcrumb, Button, Row, Col, Card, notification, Icon } from 'antd';
 
 import Count from "./components/appComponents/count"
+import ChainLog from "./components/appComponents/chainLog"
 
-const { Header, Footer, Content, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 const contractCounter = require("../build/contracts/Counter.json")
 
@@ -26,10 +27,6 @@ const contractCounter = require("../build/contracts/Counter.json")
     this.handleClick3 = this.handleClick3.bind(this)
     this.handleClick4 = this.handleClick4.bind(this)
     this.handleClick5 = this.handleClick5.bind(this)
-    this.handleClick6 = this.handleClick6.bind(this)
-    this.handleClick7 = this.handleClick7.bind(this)
-    this.handleClick8 = this.handleClick8.bind(this)
-    this.handleClick9 = this.handleClick9.bind(this)
   }
 
   toggle = () => {
@@ -86,34 +83,6 @@ const contractCounter = require("../build/contracts/Counter.json")
     })
   }
 
-  async handleClick6() {
-    const { web3Store } = this.props
-    web3Store.startPendingTxs((err, result) => {
-      console.log(result)
-    })
-  }
-
-  async handleClick7() {
-    const { web3Store } = this.props
-    web3Store.stopPendingTxs((err, result) => {
-      console.log(result)
-    })
-  }
-
-  async handleClick8() {
-    const { web3Store } = this.props
-    web3Store.startNewBlocks((err, result) => {
-      console.log(result)
-    })
-  }
-
-  async handleClick9() {
-    const { web3Store } = this.props
-    web3Store.stopNewBlocks((err, result) => {
-      console.log(result)
-    })
-  }
-
   render() {
     return (
       <Web3Gate
@@ -138,9 +107,10 @@ const contractCounter = require("../build/contracts/Counter.json")
             collapsible
             collapsedWidth={0}
             collapsed={this.state.collapsed}
-            width={300}
-            style={{ background: '#222' }}
+            width={400}
+            style={{ background: '#fff' }}
           >
+            <ChainLog/>
           </Sider>
 
           <Layout style={{ background: '#fff' }}>
@@ -230,38 +200,18 @@ const contractCounter = require("../build/contracts/Counter.json")
                   </Col>
 
                   <Col span={8}>
-                    <Card title="Pending Transactions" bordered={false}
+                    <Card title="Set Count" bordered={false}
                       extra={
                         <div>
-                          <Button onClick={this.handleClick6}>Start</Button>&nbsp;
-                        <Button onClick={this.handleClick7}>Stop</Button>
+                          INPUT
                         </div>
                       }>
                       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
                     </Card>
                   </Col>
                 </Row>
-
-                <br /><br />
-
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Card title="New Blocks" bordered={false}
-                      extra={
-                        <div>
-                          <Button onClick={this.handleClick8}>Start</Button>&nbsp;
-                        <Button onClick={this.handleClick9}>Stop</Button>
-                        </div>
-                      }>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip</p>
-                    </Card>
-                  </Col>
-                </Row>
               </div>
             </Content>
-
-            <Footer style={{ textAlign: 'center' }}>
-            </Footer>
 
           </Layout>
 
