@@ -6,7 +6,7 @@ import { Layout, Menu, Breadcrumb, Button, Row, Col, Card, notification, Icon } 
 
 import Count from "./components/appComponents/count"
 
-const { Header, Footer, Content } = Layout;
+const { Header, Footer, Content, Sider } = Layout;
 
 const contractCounter = require("../build/contracts/Counter.json")
 
@@ -15,6 +15,10 @@ const contractCounter = require("../build/contracts/Counter.json")
 @observer class App extends Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      collapsed: true,
+    };
 
     this.handleClick1 = this.handleClick1.bind(this)
     this.handleClick2 = this.handleClick2.bind(this)
@@ -25,6 +29,12 @@ const contractCounter = require("../build/contracts/Counter.json")
     this.handleClick7 = this.handleClick7.bind(this)
     this.handleClick8 = this.handleClick8.bind(this)
     this.handleClick9 = this.handleClick9.bind(this)
+  }
+
+  toggle = () => {
+    this.setState({
+      collapsed: !this.state.collapsed,
+    });
   }
 
   async handleClick1() {
@@ -114,18 +124,36 @@ const contractCounter = require("../build/contracts/Counter.json")
           rinkeby: "wss://rinkeby.infura.io/ws",
           local: "ws://127.0.0.1:8545"
         }}
+        chainfilters={{
+          pendingTxs: true,
+          blockHeaders: true,
+          contractLogs: true
+        }}
       >
         <Layout className="layout">
+
+          <Sider
+          trigger={null}
+          collapsible
+          collapsedWidth={0}
+          collapsed={this.state.collapsed}
+          width={300}
+          theme={"light"}
+          >
+          </Sider>
+
+          <Layout>
           <Header>
-            <div className="logo" />
-            <Menu
-              theme="dark"
-              mode="horizontal"
-              style={{ lineHeight: '64px' }}
-            >
-            </Menu>
+            <Icon
+              className="trigger"
+              type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+              onClick={this.toggle}
+              style={{ color: "white" }}
+            />
           </Header>
+
           <Content style={{ padding: '0 50px' }}>
+
             <Breadcrumb style={{ margin: '16px 0' }}>
             </Breadcrumb>
             
@@ -215,8 +243,11 @@ const contractCounter = require("../build/contracts/Counter.json")
               </Row>
             </div>
           </Content>
+
           <Footer style={{ textAlign: 'center' }}>
           </Footer>
+          </Layout>
+
         </Layout>
       </Web3Gate>
     )
