@@ -71,9 +71,8 @@ const txMessage = (_msg, _link) => (
       })
     })
 
-    contractStore.listen("Counter", "Increment", {}, ((err, event) => {
-      console.log(event)
-    }))
+    
+
   }
     
   render () {

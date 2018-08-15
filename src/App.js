@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
 import "./assets/less/index"
-import { Layout, Menu, Breadcrumb, Button, Row, Col, Card } from 'antd';
+import { Layout, Menu, Breadcrumb, Button, Row, Col, Card, notification, Icon } from 'antd';
+
+import Count from "./components/appComponents/count"
 
 const { Header, Footer, Content } = Layout;
 
@@ -27,7 +29,15 @@ const contractCounter = require("../build/contracts/Counter.json")
 
   async handleClick1() {
     const { contractStore } = this.props
-    console.log(await contractStore.call("Counter", "getCount", []))    
+    const res = await contractStore.call("Counter", "getCount", [])
+    notification.open({
+      key: "contractcount",
+      message: res,
+      description: "The contract count",
+      duration: 5,
+      placement: "topLeft",
+      icon: <Icon type="file" style={{ color: 'blue' }} />
+    });
   }
 
   async handleClick2() {
@@ -123,6 +133,20 @@ const contractCounter = require("../build/contracts/Counter.json")
               <h1>Augesco</h1>
               <Row gutter={16}>
                 <Col span={8}>
+                  
+                </Col>
+
+                <Col span={8}>
+                  <Count/>
+                </Col>  
+                
+                <Col span={8}>
+                  
+                </Col>               
+              </Row>
+              <br/><br/>
+              <Row gutter={16}>
+                <Col span={8}>
                   <Card title="Get Count" bordered={false}
                   extra={ <Button onClick={this.handleClick1}>Get Count</Button>}>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
@@ -149,7 +173,7 @@ const contractCounter = require("../build/contracts/Counter.json")
               <Row gutter={16}>
                 <Col span={8}>
                   <Card title="Decrement Count" bordered={false}
-                  extra={ <Button onClick={this.handleClick4}>Get Count</Button>}>
+                  extra={ <Button onClick={this.handleClick4}>Decrement Count</Button>}>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip </p>
                   </Card>
                 </Col>
