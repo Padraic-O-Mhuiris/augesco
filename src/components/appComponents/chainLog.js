@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
-import { Layout, List } from 'antd';
+import { Layout, List, Icon, Card } from 'antd';
 const { Header, Content } = Layout;
 
 @inject("web3Store")
@@ -20,7 +20,7 @@ const { Header, Content } = Layout;
     web3Store.chainEmitter.on("nbh", data => {
       console.log(data)
       const newLogs = [...this.state.logs]
-      newLogs.unshift(data.timestamp)
+      newLogs.unshift(data.hash.substring(0, 12))
       console.log(newLogs)
       this.setState({
         logs: newLogs
@@ -42,11 +42,16 @@ const { Header, Content } = Layout;
             itemLayout="vertical"
             dataSource={this.state.logs}
             renderItem={item => (
-              <List.Item style={{padding:"10px"}}>
-                <List.Item.Meta
-                  title={<a href="">{item}</a>}
-                  description="New Block"
-                />
+              <List.Item style={{ 
+                  padding:"100px"
+                }}>
+
+                <Card >
+                <Icon type="appstore" style={{ color: 'black' }} />&nbsp;
+                  
+                  {item}
+                </Card>
+                
               </List.Item>
             )}
           />

@@ -6,9 +6,8 @@ import Logo from "./assets/images/icons/ethereum.png"
 import { Layout, Breadcrumb, Button, Row, Col, Card, notification, Icon } from 'antd';
 
 import Count from "./components/appComponents/count"
-import ChainLog from "./components/appComponents/chainLog"
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content } = Layout;
 
 const contractCounter = require("../build/contracts/Counter.json")
 
@@ -18,21 +17,11 @@ const contractCounter = require("../build/contracts/Counter.json")
   constructor(props) {
     super(props)
 
-    this.state = {
-      collapsed: true,
-    };
-
     this.handleClick1 = this.handleClick1.bind(this)
     this.handleClick2 = this.handleClick2.bind(this)
     this.handleClick3 = this.handleClick3.bind(this)
     this.handleClick4 = this.handleClick4.bind(this)
     this.handleClick5 = this.handleClick5.bind(this)
-  }
-
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
   }
 
   async handleClick1() {
@@ -100,121 +89,104 @@ const contractCounter = require("../build/contracts/Counter.json")
           contractLogs: true
         }}
       >
-        <Layout className="layout">
+        <Layout style={{ background: '#fff' }}>
+          <Header style={{ background: '#222' }}>
+            <Row>
+              <Col span={1}>
+                {/* <Icon
+                  className="trigger"
+                  type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                  onClick={this.toggle}
+                  style={{ color: "white" }}
+                /> */}
+              </Col>
+              <Col span={1}>
+                <div className="logo">
+                  <img style={{
+                    height: "40px"
+                  }} alt="ethereum-logo" src={Logo} ></img>
+                </div>
+              </Col>
+              <Col span={22}>
+                <h1 style={{ color: "white" }}>Augesco - Begin To Develop</h1>
+              </Col>
+            </Row>
+          </Header>
 
-          <Sider
-            trigger={null}
-            collapsible
-            collapsedWidth={0}
-            collapsed={this.state.collapsed}
-            width={400}
-            style={{ background: '#fff' }}
-          >
-            <ChainLog/>
-          </Sider>
+          <Content style={{ padding: '0 50px' }}>
 
-          <Layout style={{ background: '#fff' }}>
+            <Breadcrumb style={{ margin: '16px 0' }}>
+            </Breadcrumb>
 
-            <Header style={{ background: '#222' }}>
-              <Row>
-                <Col span={1}>
-                  <Icon
-                    className="trigger"
-                    type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                    onClick={this.toggle}
-                    style={{ color: "white" }}
-                  />
+            <div style={{ background: '#ECECEC', padding: '30px' }}>
+
+              <Row gutter={16}>
+                <Col span={8}>
+
                 </Col>
-                <Col span={1}>
-                  <div className="logo">
-                    <img style={{
-                      height: "40px"
-                    }} alt="ethereum-logo" src={Logo} ></img>
-                  </div>
+
+                <Col span={8}>
+                  <Count />
                 </Col>
-                <Col span={22}>
-                  <h1 style={{ color: "white" }}>Augesco - Begin To Develop</h1>
+
+                <Col span={8}>
+
                 </Col>
               </Row>
-            </Header>
+              <br /><br />
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Card title="Get Count" bordered={false}
+                    extra={<Button onClick={this.handleClick1}>Get Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                  </Card>
+                </Col>
 
-            <Content style={{ padding: '0 50px' }}>
+                <Col span={8}>
+                  <Card title="Increment Count" bordered={false}
+                    extra={<Button onClick={this.handleClick2}>Increment Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nis</p>
+                  </Card>
+                </Col>
 
-              <Breadcrumb style={{ margin: '16px 0' }}>
-              </Breadcrumb>
+                <Col span={8}>
+                  <Card title="Fail Count" bordered={false}
+                    extra={<Button onClick={this.handleClick3}>Fail Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mi</p>
+                  </Card>
+                </Col>
+              </Row>
 
-              <div style={{ background: '#ECECEC', padding: '30px' }}>
+              <br /><br />
 
-                <Row gutter={16}>
-                  <Col span={8}>
+              <Row gutter={16}>
+                <Col span={8}>
+                  <Card title="Decrement Count" bordered={false}
+                    extra={<Button onClick={this.handleClick4}>Decrement Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip </p>
+                  </Card>
+                </Col>
 
-                  </Col>
+                <Col span={8}>
+                  <Card title="Reset Count" bordered={false}
+                    extra={<Button onClick={this.handleClick5}>Reset Count</Button>}>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                  </Card>
+                </Col>
 
-                  <Col span={8}>
-                    <Count />
-                  </Col>
-
-                  <Col span={8}>
-
-                  </Col>
-                </Row>
-                <br /><br />
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Card title="Get Count" bordered={false}
-                      extra={<Button onClick={this.handleClick1}>Get Count</Button>}>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-                    </Card>
-                  </Col>
-
-                  <Col span={8}>
-                    <Card title="Increment Count" bordered={false}
-                      extra={<Button onClick={this.handleClick2}>Increment Count</Button>}>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nis</p>
-                    </Card>
-                  </Col>
-
-                  <Col span={8}>
-                    <Card title="Fail Count" bordered={false}
-                      extra={<Button onClick={this.handleClick3}>Fail Count</Button>}>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mi</p>
-                    </Card>
-                  </Col>
-                </Row>
-
-                <br /><br />
-
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Card title="Decrement Count" bordered={false}
-                      extra={<Button onClick={this.handleClick4}>Decrement Count</Button>}>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip </p>
-                    </Card>
-                  </Col>
-
-                  <Col span={8}>
-                    <Card title="Reset Count" bordered={false}
-                      extra={<Button onClick={this.handleClick5}>Reset Count</Button>}>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-                    </Card>
-                  </Col>
-
-                  <Col span={8}>
-                    <Card title="Set Count" bordered={false}
-                      extra={
-                        <div>
-                          INPUT
-                        </div>
-                      }>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
-                    </Card>
-                  </Col>
-                </Row>
-              </div>
-            </Content>
-
-          </Layout>
-
+                <Col span={8}>
+                  <Card title="Set Count" bordered={false}
+                    extra={
+                      <div>
+                        INPUT
+                      </div>
+                    }>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                  </Card>
+                </Col>
+              </Row>
+            </div>
+          </Content>
         </Layout>
       </Web3Gate>
     )

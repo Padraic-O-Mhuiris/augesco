@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
 import { txStatus } from '../../constants';
-import { notification, Icon } from 'antd';
+import { notification, Icon, Layout } from 'antd';
+import ChainLog from "../appComponents/chainLog"
+
+const { Sider } = Layout;
 
 const etherscan = {
   1: "https://etherscan.io/tx/",
@@ -16,6 +19,19 @@ const txMessage = (_msg, _link) => (
 @inject("web3Store")
 @inject("contractStore")
 @observer class EventGate extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      collapsed: false,
+    };
+  }
+
+  toggle = () => {
+    this.setState({
+      collapsed: !this.state.collapsed,
+    });
+  }
 
   componentDidMount() {
     const { contractStore, web3Store } = this.props
@@ -74,9 +90,23 @@ const txMessage = (_msg, _link) => (
     
   render () {
     return (
-      <div>
+      <Layout className="layout">
+          <Sider
+            collapsible
+            collapsedWidth={0}
+            collapsed={this.state.collapsed}
+            width={400}
+            onCollapse={(collapsed, type) => console.log(this.toggle())}
+            style={{ 
+              background: '#fff', 
+              height: '100vh',
+              left: 0
+            }}
+          >
+            <ChainLog/>
+          </Sider>
         {this.props.children}
-      </div>
+      </Layout>
     )
   }
 }
