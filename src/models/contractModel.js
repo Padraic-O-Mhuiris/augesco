@@ -115,7 +115,7 @@ export const ContractStore = types
     txEmitter: types.optional(types.frozen(), {}),
     web3: types.optional(types.frozen(), {}),
     loaded: types.boolean,
-    showChain: true
+    showChain: false
   })
   .actions(self => ({
     add(_id, _abi, _txHash, _address, _contract, _methods, _eventContract, _events) {

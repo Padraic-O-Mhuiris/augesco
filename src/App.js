@@ -3,7 +3,7 @@ import Web3Gate from "./components/web3Gate"
 import { inject, observer } from "mobx-react"
 import "./assets/less/index"
 import Logo from "./assets/images/icons/ethereum.png"
-import { Layout, Breadcrumb, Button, Row, Col, Card, notification, Icon } from 'antd';
+import { Layout, Breadcrumb, Button, Row, Col, Card, notification, Icon, InputNumber } from 'antd';
 
 import Count from "./components/appComponents/count"
 
@@ -17,11 +17,15 @@ const contractCounter = require("../build/contracts/Counter.json")
   constructor(props) {
     super(props)
 
+    this.state = {
+      newNumber: 1
+    }
     this.handleClick1 = this.handleClick1.bind(this)
     this.handleClick2 = this.handleClick2.bind(this)
     this.handleClick3 = this.handleClick3.bind(this)
     this.handleClick4 = this.handleClick4.bind(this)
     this.handleClick5 = this.handleClick5.bind(this)
+    this.handleClick6 = this.handleClick6.bind(this)
   }
 
   async handleClick1() {
@@ -68,6 +72,14 @@ const contractCounter = require("../build/contracts/Counter.json")
     const { contractStore } = this.props
     const { web3Store } = this.props
     await contractStore.exec("Counter", "changeCount", [20], {
+      "from": web3Store.account
+    })
+  }
+
+  async handleClick6() {
+    const { contractStore } = this.props
+    const { web3Store } = this.props
+    await contractStore.exec("Counter", "changeCount", [this.state.newNumber], {
       "from": web3Store.account
     })
   }
@@ -170,10 +182,12 @@ const contractCounter = require("../build/contracts/Counter.json")
                 </Col>
 
                 <Col span={8}>
-                  <Card title="Set Count" bordered={false}
+                  <Card title="New Count" bordered={false}
                     extra={
                       <div>
-                        INPUT
+                        <InputNumber min={1} max={100000} defaultValue={this.state.newNumber} onChange={(value) => (this.setState({ newNumber: value }))} />
+                        &nbsp;
+                        <Button onClick={this.handleClick6}>Update</Button>
                       </div>
                     }>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
