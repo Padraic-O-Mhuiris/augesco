@@ -10,7 +10,7 @@ export const ContractInstance = types
     contract: types.optional(types.frozen(), {}),
     methods: types.optional(types.frozen(), {}),
     eventContract: types.optional(types.frozen(), {}),
-    events: types.optional(types.frozen(), {})
+    events: types.optional(types.frozen(), {}),
   })
   .actions(self => ({
     getMethod(_method) {
@@ -95,12 +95,9 @@ export const transactionInstance = types
       }
     },
     emitPending(txData) {
-      console.log(txData)
       getRoot(self).txEmitter.emit(txStatus.PENDING+txData.hash, txData)
     },
     emitMined(txData) {
-      console.log(txData)
-
       getRoot(self).txEmitter.emit(txStatus.MINED+txData.transactionHash, txData)
     },
     emitFailed(txData) {
@@ -117,7 +114,8 @@ export const ContractStore = types
     transactions: types.map(transactionInstance),
     txEmitter: types.optional(types.frozen(), {}),
     web3: types.optional(types.frozen(), {}),
-    loaded: types.boolean
+    loaded: types.boolean,
+    showChain: false
   })
   .actions(self => ({
     add(_id, _abi, _txHash, _address, _contract, _methods, _eventContract, _events) {
@@ -137,6 +135,9 @@ export const ContractStore = types
     },
     toggleLoaded() {
       self.loaded = !self.loaded
+    },
+    toggleShowChain() {
+      self.showChain = !self.showChain
     },
     setEmitter(_emitter) {
       self.txEmitter = _emitter

@@ -1,4 +1,4 @@
-# mobx metamask trufflebox
+# Augesco
 
 The goal for this project is to extend the easy to use dapp development environment truffle has to offer. The finished product will be similar to that of the react truffle box but will include a state management system which will enable developers to create much more dynamic applications. 
 
