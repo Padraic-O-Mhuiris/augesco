@@ -83,22 +83,17 @@ const contractCounter = require("../build/contracts/Counter.json")
           rinkeby: "wss://rinkeby.infura.io/ws",
           local: "ws://127.0.0.1:8545"
         }}
-        chainfilters={{
-          pendingTxs: true,
-          blockHeaders: true,
-          contractLogs: true
-        }}
       >
         <Layout style={{ background: '#fff' }}>
           <Header style={{ background: '#222' }}>
             <Row>
               <Col span={1}>
-                {/* <Icon
+                <Icon
                   className="trigger"
-                  type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                  onClick={this.toggle}
+                  type={this.props.contractStore.showChain ? 'menu-unfold' : 'menu-fold'}
+                  onClick={this.props.contractStore.toggleShowChain}
                   style={{ color: "white" }}
-                /> */}
+                />
               </Col>
               <Col span={1}>
                 <div className="logo">
@@ -187,6 +182,7 @@ const contractCounter = require("../build/contracts/Counter.json")
               </Row>
             </div>
           </Content>
+
         </Layout>
       </Web3Gate>
     )

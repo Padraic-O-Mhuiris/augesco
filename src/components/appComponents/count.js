@@ -21,8 +21,6 @@ class Count extends Component {
   async componentDidMount() {
     const { contractStore } = this.props
     contractStore.listen("Counter", "Increment", {}, (async(err, event) => {
-      console.log("INCREMENT", event)
-
       this.setState({
         count: await contractStore.call("Counter", "getCount", [])
       })
@@ -38,8 +36,6 @@ class Count extends Component {
     }))
 
     contractStore.listen("Counter", "Decrement", {}, (async (err, event) => {
-      console.log("DECREMENT", event)
-
       this.setState({
         count: await contractStore.call("Counter", "getCount", [])
       })
@@ -55,7 +51,6 @@ class Count extends Component {
     }))
 
     contractStore.listen("Counter", "CountChange", {}, (async (err, event) => {
-      console.log("COUNT CHANGE", event)
       this.setState({
         count: await contractStore.call("Counter", "getCount", [])
       })

@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
 import { txStatus } from '../../constants';
-import { notification, Icon, Layout } from 'antd';
-import ChainLog from "../appComponents/chainLog"
-
-const { Sider } = Layout;
+import { notification, Icon, Drawer } from 'antd';
+import getWeb3Network from "../../utils/getWeb3Network"
+import ChainLog from "./chainLog"
 
 const etherscan = {
   1: "https://etherscan.io/tx/",
@@ -19,19 +18,6 @@ const txMessage = (_msg, _link) => (
 @inject("web3Store")
 @inject("contractStore")
 @observer class EventGate extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      collapsed: false,
-    };
-  }
-
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  }
 
   componentDidMount() {
     const { contractStore, web3Store } = this.props
@@ -90,23 +76,19 @@ const txMessage = (_msg, _link) => (
     
   render () {
     return (
-      <Layout className="layout">
-          <Sider
-            collapsible
-            collapsedWidth={0}
-            collapsed={this.state.collapsed}
-            width={400}
-            onCollapse={(collapsed, type) => console.log(this.toggle())}
-            style={{ 
-              background: '#fff', 
-              height: '100vh',
-              left: 0
-            }}
-          >
-            <ChainLog/>
-          </Sider>
-        {this.props.children}
-      </Layout>
+    <div>
+       <Drawer
+          title={getWeb3Network(this.props.web3Store.network).toUpperCase()}
+          placement="left"
+          width="500"
+          closable={true}
+          onClose={this.props.contractStore.toggleShowChain}
+          visible={this.props.contractStore.showChain}
+        >
+          <ChainLog/>
+        </Drawer>
+      {this.props.children}
+    </div>
     )
   }
 }
