@@ -16,13 +16,17 @@ const etherscan = {
 
     this.state = {
       logs: [],
-      isLoading: true
+      isLoading: true,
+      timer: 0
     };
   }
+
+
 
   componentDidMount() {
     const { contractStore, web3Store } = this.props
 
+    this.timerInterval = setInterval(() => this.setState({ timer: this.state.timer + 1}), 1000)
     web3Store.chainEmitter.on("nbh", data => {
       const newLogs = [...this.state.logs]
       let obj = {}
@@ -35,7 +39,8 @@ const etherscan = {
       newLogs.unshift(obj)
       this.setState({
         logs: newLogs,
-        isLoading: false
+        isLoading: false,
+        timer: 0
       })
     })
   }
@@ -47,9 +52,10 @@ const etherscan = {
         header={
         <div>
         <Row gutter={8} justify={"center"} align={"middle"} type={"flex"} style={{textAlign: "center"}}>
-          <Col span={6}><p>Block #</p><Icon type="appstore" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={2}><p style={{ fontSize: 16 }}>{ this.state.timer } s</p></Col>
+          <Col span={5}><p>Block #</p><Icon type="appstore" style={{ fontSize: 20, color: '#08c' }} /></Col>
           <Col span={6}><p>Time</p><Icon type="calendar" style={{ fontSize: 20, color: '#08c' }} /></Col>
-          <Col span={6}><p>Gas: Used/Limit</p><Icon type="line-chart" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={5}><p>Gas: Used/Limit</p><Icon type="line-chart" style={{ fontSize: 20, color: '#08c' }} /></Col>
           <Col span={6}><p>BlockHash</p><Icon type="environment" style={{ fontSize: 20, color: '#08c' }} /></Col>
         </Row>
         <Divider style={{ marginBottom: "7px" }}/>
@@ -66,9 +72,10 @@ const etherscan = {
             <div>
               <a target="_blank" rel="noopener noreferrer" href={weblink+item.number}>
                 <Row gutter={8} justify={"center"} align={"middle"} type={"flex"} style={{textAlign: "center"}}>
-                  <Col span={6}>{ item.number }</Col>
+                  <Col span={2}>{  }</Col>
+                  <Col span={5}>{ item.number }</Col>
                   <Col span={6}>{ item.timestamp }</Col>
-                  <Col span={6}>{ item.gas }</Col>
+                  <Col span={5}>{ item.gas }</Col>
                   <Col span={6}>{ item.hash }</Col>
                 </Row>
               </a>
