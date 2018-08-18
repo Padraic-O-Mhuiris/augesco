@@ -47,11 +47,12 @@ const etherscan = {
         header={
         <div>
         <Row gutter={8} justify={"center"} align={"middle"} type={"flex"} style={{textAlign: "center"}}>
-          <Col span={6}><Icon type="appstore" style={{ fontSize: 20, color: '#08c' }} /></Col>
-          <Col span={6}><Icon type="calendar" style={{ fontSize: 20, color: '#08c' }} /></Col>
-          <Col span={6}><Icon type="line-chart" style={{ fontSize: 20, color: '#08c' }} /></Col>
-          <Col span={6}><Icon type="environment" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={6}><p>Block #</p><Icon type="appstore" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={6}><p>Time</p><Icon type="calendar" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={6}><p>Gas: Used/Limit</p><Icon type="line-chart" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={6}><p>BlockHash</p><Icon type="environment" style={{ fontSize: 20, color: '#08c' }} /></Col>
         </Row>
+        <Divider style={{ marginBottom: "7px" }}/>
         </div>
       }
         itemLayout="vertical"
@@ -59,7 +60,7 @@ const etherscan = {
         renderItem={item => (
           <List.Item style={{ 
               padding:"0px",
-              margin: "5px",
+              margin: "0px",
               border: "none"
             }}>
             <div>

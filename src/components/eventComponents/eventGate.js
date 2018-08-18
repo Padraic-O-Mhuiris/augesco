@@ -78,7 +78,7 @@ const txMessage = (_msg, _link) => (
     return (
     <div>
        <Drawer
-          title={getWeb3Network(this.props.web3Store.network).toUpperCase()}
+          title={getWeb3Network(this.props.web3Store.network).toUpperCase() + " NETWORK - BlockHeaders"}
           placement="left"
           width="500"
           closable={true}
