@@ -21,11 +21,11 @@ const contractStore = ContractStore.create({
 })
 
 const app = (
-  <Provider 
+  <Provider
     web3Store={web3Store}
     contractStore={contractStore}
-    >
-    <App/>
+  >
+    <App />
   </Provider>
 )
 ReactDOM.render(

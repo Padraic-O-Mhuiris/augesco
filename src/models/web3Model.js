@@ -1,4 +1,4 @@
-import { types , flow } from 'mobx-state-tree'
+import { types, flow } from 'mobx-state-tree'
 import { web3Context } from "../constants"
 import { BigNumber } from 'bignumber.js';
 import getWeb3Network from "../utils/getWeb3Network"
@@ -56,7 +56,7 @@ export const Web3Store = types
       }
     }),
     startPendingTxs() {
-      if(self.status === web3Context.WEB3_LOADED) {
+      if (self.status === web3Context.WEB3_LOADED) {
         ptx = self.eventWeb3.eth.subscribe('pendingTransactions', (err, result) => {
           self.chainEmitter.emit("ptx", result)
         })
@@ -68,7 +68,7 @@ export const Web3Store = types
       })
     },
     startNewBlocks(_cb) {
-      if(self.status === web3Context.WEB3_LOADED) {
+      if (self.status === web3Context.WEB3_LOADED) {
         nbh = self.eventWeb3.eth.subscribe('newBlockHeaders', (err, result) => {
           self.chainEmitter.emit("nbh", result)
         })
@@ -109,4 +109,3 @@ export const Web3Store = types
       return getWeb3Network(self.network)
     }
   }))
-  

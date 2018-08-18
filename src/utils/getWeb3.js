@@ -1,8 +1,8 @@
 import Web3 from 'web3'
 
-let getWeb3 = new Promise(function(resolve, reject) {
+let getWeb3 = new Promise(function (resolve, reject) {
   // Wait for loading completion to avoid race conditions with web3 injection timing.
-  window.addEventListener('load', function() {
+  window.addEventListener('load', function () {
     var results
     var web3 = window.web3
 

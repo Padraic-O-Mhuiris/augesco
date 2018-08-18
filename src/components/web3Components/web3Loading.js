@@ -2,14 +2,14 @@ import React, { Component } from 'react'
 import { Spin, Row, Col, Icon } from 'antd';
 
 const antIcon = <Icon type="loading" style={
-  { 
-    fontSize: 150, 
+  {
+    fontSize: 150,
     height: "150px",
     width: "150px"
-}} spin />;
+  }} spin />;
 
 class Web3Loading extends Component {
-  render () {
+  render() {
     return (
       <div >
         <Row type="flex" justify="center" align="middle">
@@ -23,7 +23,7 @@ class Web3Loading extends Component {
                 <p>Ensure websocket provider is present!</p>
                 <br /><br />
                 <Spin indicator={antIcon} />
-                
+
               </Col>
               <Col span={2}></Col>
             </Row>
