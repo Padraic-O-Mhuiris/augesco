@@ -69,7 +69,7 @@ class Count extends Component {
   render() {
     return (
       <Card title="Count" style={{ textAlign: "center" }} bordered={false}>
-        <h1>{this.state.count}</h1>
+        <h1 style={{ fontSize: "120px" }}>{this.state.count}</h1>
       </Card>
 
     )

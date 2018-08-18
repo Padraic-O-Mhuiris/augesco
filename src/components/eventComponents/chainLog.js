@@ -55,7 +55,7 @@ const etherscan = {
           <Col span={2}><p style={{ fontSize: 16 }}>{ this.state.timer } s</p></Col>
           <Col span={5}><p>Block #</p><Icon type="appstore" style={{ fontSize: 20, color: '#08c' }} /></Col>
           <Col span={6}><p>Time</p><Icon type="calendar" style={{ fontSize: 20, color: '#08c' }} /></Col>
-          <Col span={5}><p>Gas: Used/Limit</p><Icon type="line-chart" style={{ fontSize: 20, color: '#08c' }} /></Col>
+          <Col span={5}><p>Gas Usage</p><Icon type="line-chart" style={{ fontSize: 20, color: '#08c' }} /></Col>
           <Col span={6}><p>BlockHash</p><Icon type="environment" style={{ fontSize: 20, color: '#08c' }} /></Col>
         </Row>
         <Divider style={{ marginBottom: "7px" }}/>
