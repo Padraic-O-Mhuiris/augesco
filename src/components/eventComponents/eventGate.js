@@ -74,6 +74,11 @@ const txMessage = (_msg, _link) => (
     })
   }
 
+  componentWillUnmount() {
+    const { web3Store } = this.props
+    web3Store.stopNewBlocks()
+  }
+
   render() {
     return (
       <div>

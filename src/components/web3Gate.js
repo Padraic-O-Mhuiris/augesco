@@ -44,13 +44,14 @@ import Web3 from 'web3'
                 web3Store.updateNetwork(network)
 
                 const provider = this.hasProviders()
+
                 if(provider !== undefined) {  
                   const eventWeb3 = new Web3(new Web3.providers.WebsocketProvider(provider))
                   web3Store.setEventWeb3(eventWeb3)
 
                   if(accounts[0] !== web3Store.account) {
                     web3Store.setAccount(accounts[0])
-                  }
+                  } 
                   this.fetchBalance()
                   web3Store.updateStatus(web3Context.WEB3_LOADED)
                 } else {

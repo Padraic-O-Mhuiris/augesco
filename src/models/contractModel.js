@@ -114,7 +114,7 @@ export const ContractStore = types
     transactions: types.map(transactionInstance),
     txEmitter: types.optional(types.frozen(), {}),
     web3: types.optional(types.frozen(), {}),
-    loaded: types.boolean,
+    loaded: false,
     showChain: false
   })
   .actions(self => ({
@@ -131,6 +131,7 @@ export const ContractStore = types
       })
     },
     delete(_id) {
+      console.log("jhbhb")
       self.contracts.delete(_id)
     },
     toggleLoaded() {

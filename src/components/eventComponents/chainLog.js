@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from "mobx-react"
-import { List, Row, Col, Divider, Icon, Card } from 'antd';
+import { List, Row, Col, Divider, Icon } from 'antd';
 
 const etherscan = {
   1: "https://etherscan.io/block/",
@@ -21,10 +21,8 @@ const etherscan = {
     };
   }
 
-
-
   componentDidMount() {
-    const { contractStore, web3Store } = this.props
+    const { web3Store } = this.props
 
     this.timerInterval = setInterval(() => this.setState({ timer: this.state.timer + 1}), 1000)
     web3Store.chainEmitter.on("nbh", data => {
@@ -45,6 +43,10 @@ const etherscan = {
     })
   }
 
+  componentWillUnmount() {
+    clearInterval(this.timerInterval)
+  }
+  
   render() {
     const weblink = etherscan[this.props.web3Store.network]
     return (
