@@ -108,10 +108,10 @@ const EventEmitter = require('events')
     web3Store.startNewBlocks()
   }
   
-  componentWillUnmount() {
-    const { web3Store } = this.props
-    web3Store.stopNewBlocks()
-  }
+  // componentWillUnmount() {
+  //   const { web3Store } = this.props
+  //   web3Store.stopNewBlocks()
+  // }
 
   render() {
     const { contractStore } = this.props

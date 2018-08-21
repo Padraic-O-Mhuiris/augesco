@@ -49,7 +49,7 @@ class Count extends Component {
       });
     }))
 
-    contractStore.listen("Counter", "CountChange", {}, (async (err, event) => {
+    contractStore.listen("Counter", "CountChange", {}, ( async (err, event) => {
       this.setState({
         count: await contractStore.call("Counter", "getCount", [])
       })

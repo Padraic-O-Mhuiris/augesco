@@ -36,37 +36,37 @@ const { Header, Content } = Layout;
     });
   }
 
-  async handleClick2() {
+  handleClick2() {
     const { contractStore } = this.props
     const { web3Store } = this.props
 
-    await contractStore.exec("Counter", "incCount", [], {
+    contractStore.exec("Counter", "incCount", [], {
       "from": web3Store.account
     })
   }
 
-  async handleClick3() {
+  handleClick3() {
     const { contractStore } = this.props
     const { web3Store } = this.props
 
-    await contractStore.exec("Counter", "changeCount", [-1], {
+    contractStore.exec("Counter", "changeCount", [-1], {
       "from": web3Store.account
     })
   }
 
-  async handleClick4() {
+  handleClick4() {
     const { contractStore } = this.props
     const { web3Store } = this.props
 
-    await contractStore.exec("Counter", "decCount", [], {
+    contractStore.exec("Counter", "decCount", [], {
       "from": web3Store.account
     })
   }
 
-  async handleClick5() {
+  handleClick5() {
     const { contractStore } = this.props
     const { web3Store } = this.props
-    await contractStore.exec("Counter", "changeCount", [this.state.newNumber], {
+    contractStore.exec("Counter", "changeCount", [this.state.newNumber], {
       "from": web3Store.account
     })
   }
@@ -94,7 +94,7 @@ const { Header, Content } = Layout;
               </Col>
               <Col span={20}>
                 <div style={{ display: "flex" }}>
-                  <h1 className="navbar-pagetitle">Augesco</h1>
+                  <h1 className="navbar-pagetitle">AUGESCO</h1>
                 </div>
               </Col>
             </Row>
@@ -114,7 +114,6 @@ const { Header, Content } = Layout;
                   The difficulty with developing a dapp is the excessive amount of boiler-plate code necessary to setup metamask, load your contracts and watch for on-chain events when contract events are executed. Augesco uses a client state-management system called mobx-state-tree to simplify these actions
                   Below is a display of functionality for a counter contract. This contract simply holds an integer value 'count' and different actions can be performed to change this count.</p>
                   <br />
-                  <p className="content">Injected into the props of this react application are two objects <code>web3Store</code> and <code>contractStore</code>. Referencing these enacts all the functionality you see here. </p>
                 </Col>
                 <Col span={2}>
                 </Col>

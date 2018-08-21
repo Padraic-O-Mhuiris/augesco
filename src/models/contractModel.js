@@ -131,7 +131,6 @@ export const ContractStore = types
       })
     },
     delete(_id) {
-      console.log("jhbhb")
       self.contracts.delete(_id)
     },
     toggleLoaded() {
@@ -211,9 +210,9 @@ export const ContractStore = types
         console.error("Not ready")
       }
     }),
-    listen(_id, _event, args, cb) {
+    listen(_id, _event, _options, _cb) {
       if (self.loaded && self.contracts.has(_id)) {
-        self.use(_id).events[_event](...args, cb)
+        self.use(_id).events[_event](..._options, _cb)
       } else {
         console.error("Not ready")
       }
