@@ -2,9 +2,9 @@
 
 Augesco is a new ethereum dapp development framework that is intended to provide more out-of-the-box functionality for truffle-based projects. The project is similar to [drizzle](https://truffleframework.com/boxes/drizzle) which is provided by truffle. A large problem I found with drizzle and generally developing web dapps is the large amount of boilerplate code that is necessary to interact with contracts. 
 
-Augesco uses [mobx-state-tree](https://github.com/mobxjs/mobx-state-tree) as it's state management system as an alternative to redux. With it, Augesco injects two stores, **web3store** which controls blockchain interactivity and **contractstore** which handles contract logic. The project also comes with out-of-the-box dapp components like metamask lockscreens and transaction notifiers. Included in this project is a sample contract which shows how the project works. 
+Augesco uses [mobx-state-tree](https://github.com/mobxjs/mobx-state-tree) as it's state management system as an alternative to redux, the reasoning is best outlined [here](https://codeburst.io/the-curious-case-of-mobx-state-tree-7b4e22d461f). With it, Augesco injects two stores, **web3store** which controls blockchain interactivity and **contractstore** which handles contract logic. The project also comes with out-of-the-box dapp components like metamask lockscreens and transaction notifiers. Included in this project is a sample contract which shows how the project works. 
 
-### Requirements
+## Requirements
 
 - [MetaMask plugin](https://metamask.io/) 
 
@@ -18,7 +18,7 @@ Augesco uses [mobx-state-tree](https://github.com/mobxjs/mobx-state-tree) as it'
 
 Alternatively, a local node can be used. 
 
-### Setup
+## Setup
 
 - Clone this project
   
@@ -42,7 +42,7 @@ Alternatively, a local node can be used.
 
   ``` npm start ```
 
-### How it works
+## How it works
 
 The project is built around mobx-state-tree which is a state-management system similar to redux which has been traditionally used in blockchain dapps. Mobx-state-tree enables developers to model their data in a more object-orientated style.
 
@@ -56,12 +56,21 @@ Aguesco abstracts away blockchain interactivity by wrapping the folder in 3 laye
 
 ---
 
-### Functions
-
 When accessing the two stores when building a dapp, I would advise using es6 syntax as below to save writing `this.props` everywhere.
-``` 
+```javascript
 const { web3Store, contractStore } = this.props  
 ```
+In order to be able reference any model stores with mobx, we must inject the stores into our react components like so:
+
+```javascript
+import { inject, observer } from "mobx-react"
+
+@inject("web3Store")
+@inject("contractStore")
+@observer class AppContent extends Component {
+```
+
+## ContractStore
 
 #### `contractStore.call(<contractName>, <function>, <args>)` 
 - `<contractName>` - string, name of the contract from which you wish to call
@@ -87,7 +96,7 @@ let count = await contractStore.call("Counter", "getCount", [])
 
 `exec()` is to be used for any contract function that alters the state of the contract by a transaction. These functions are called *setters*. When used in this application, a popup will appear from metamask to confirm or reject the transaction. When setters are executed it usually takes 10-15 seconds until they are mined and resolved which lends itself to bad Ux. However, augesco provides a meaningful solution to this through transaction and event notifiers. Example:
 
-```
+```solidity
 function incCount() public {
   require(count < (2**256 - 1));
   count = count + 1;
@@ -104,13 +113,12 @@ contractStore.exec("Counter", "incCount", [], {
 #### `contractStore.listen(<contractName>, <event>, <options>, <callback>)` 
 - `<contractName>` - string, name of the contract from which you wish to call
 - `<event>` - string, name of event within contract
-- `<options>` - object, filtering options. See web3 [docs]
-(https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#contract-events)
-- `<callback>` - function, takes two arguments, err and event, event returns the event log data.
+- `<options>` - object, filtering options. See web3 [docs](https://web3js.readthedocs.io/en/1.0/web3-eth-contract.html#contract-events)
+- `<callback>` - function, returns two arguments, err and event, event returns the event log data.
 
-Solidity smartcontracts have implemented events which can be used to track the state of a contract over time. Augesco has a `listen()` function which can be used to wait on changes to such functions. Looking at the `incCount()` function in the previous section, an `Increment()` event is emitted. By listening for emitted events, we can update our frontend representation in accordance with the changes through the callback. Example:
+Solidity contracts have implemented events which can be used to track the state of a contract over time. Augesco has a `listen()` function which can be used to wait on changes to such functions. Looking at the `incCount()` function in the previous section, an `Increment()` event is emitted. By listening for emitted events, we can update our frontend representation in accordance with the changes through the callback. Example:
 
-```
+```soldity
 event Increment(
   uint count,
   address indexed sender
@@ -118,7 +126,72 @@ event Increment(
 ```
 
 ``` javascript
-contractStore.listen("Counter", "Increment", {}, (async (err, event) => {...}))
+contractStore.listen("Counter", "Increment", {}, (err, event) => {...})
 ```
-Using this, in tandem with `exec()` function which emits a corresponding event can lead to a more reactive design. 
+Using this, in tandem with an `exec()` function which emits a corresponding event can lead to a more reactive design. 
 
+
+#### `contractStore.txEmitter.on(<eventName>, <data>)`
+
+For handling transaction logic, Aguesco implements a listener object which emits the status of a sent transaction. When we a new transaction is executed, from our `exec()` function, Aguesco keeps track of the transaction until it succeeds or fails. This involves a number of stages which is represented in *constants.js* The eventgate component uses the emitter extensively to provide popup notifications for the ui. 
+
+```javascript
+contractStore.txEmitter.on(txStatus.NEW, (hash) => {
+
+  contractStore.txEmitter.once(txStatus.PENDING + hash, (data) => {})
+  contractStore.txEmitter.on(txStatus.MINED + hash, (data) => {})
+  contractStore.txEmitter.on(txStatus.SUCCESS + hash, (data) => {})
+  contractStore.txEmitter.on(txStatus.FAILED + hash, (data) => {})
+
+}
+```
+
+By nesting the *on-events* to be inside the new transaction, we can concatenate the status with its unique hash to provide more fine control for each event. This makes it easier when dealing with notifications. 
+
+## Web3Store
+
+`web3Store.account` - returns the current users account and should correspond directly with metamask
+
+`web3Store.balanceEth` - returns the current users balance in standard ether
+
+`web3Store.balanceGwei` - returns the current users balance in 1x10^9 eth (gwei)
+
+`web3Store.balanceWei` - returns the current users balance in 1x10^18 eth (wei). Wei is the smallest denomination of ether possible.
+
+`web3Store.netName` - returns the current network name
+
+#### `web3Store.chainEmitter`
+The chainEmitter object works similarly to the txEmitter and is used to monitor blockchain subscriptions. As of now, subscriptions to the pending transactions and new block headers are available to be used. As of now, logs have not been implemented. The utility of being able to observe live data from the blockchain may improve user experience and possibly enable less-trusting users learn as to how the blockchain works. 
+
+Pending transactions are started and stopped: 
+- `web3Store.startPendingTxs()`
+- `web3Store.stopPendingTxs()`
+
+Once started, event result objects are emitted by the chainEmitter and can be caught anywhere within the application. We use the shorthand *"ptx"* as the eventname
+
+```javascript
+web3Store.chainEmitter.on("ptx", data => {
+  // do something with incoming transaction data
+})
+```
+
+Similarly, new blocks are started and stopped
+- `web3Store.startNewBlocks()`
+- `web3Store.stopNewBlocks()`
+
+We use *"nbh"* as the eventname
+```javascript
+web3Store.chainEmitter.on("nbh", data => {
+  // do something with incoming block headers
+})
+```
+
+When both subscriptions are stopped, a single unsubscribe event is fired with the eventname + *"stopped"* appended.
+
+
+## Design
+
+The application uses [antd](https://ant.design/docs/react/introduce) as a css framework. Edits and overrides can be made using less in the assets folder.
+---
+
+> AGUESCO - BEGIN TO DEVELOP
