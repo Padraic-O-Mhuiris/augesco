@@ -191,7 +191,8 @@ When both subscriptions are stopped, a single unsubscribe event is fired with th
 
 ## Design
 
-The application uses [antd](https://ant.design/docs/react/introduce) as a css framework. Edits and overrides can be made using less in the assets folder.
+The application uses [antd](https://ant.design/docs/react/introduce) as a css framework. Edits and overrides can be made using less in the assets folder. Ant makes it quite easy to generate a good looking ui but it can be easily removed using npm if material/semantic-ui etc are preferable.
+
 ---
 
 > AGUESCO - BEGIN TO DEVELOP

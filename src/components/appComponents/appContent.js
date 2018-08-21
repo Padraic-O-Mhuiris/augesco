@@ -5,7 +5,7 @@ import { Layout, Breadcrumb, Button, Row, Col, Card, notification, Icon, InputNu
 
 import Count from "./count"
 
-const { Header, Content } = Layout;
+const { Header, Content, Footer } = Layout;
 
 @inject("web3Store")
 @inject("contractStore")
@@ -192,7 +192,28 @@ const { Header, Content } = Layout;
               
             </div>
           </Content>
-          <br /><br />
+          <Footer>
+            <Row style={{textAlign: "center"}}>
+              <Col span={8}>
+                <p>Augesco - Begin To Develop</p>
+              </Col>
+              <Col span={8}>
+              <a href="https://www.linkedin.com/in/patrick-h-morris-437aa4109/"><Icon type="linkedin" style={{ fontSize: 20, color: '#08c' }}/></a>
+              &nbsp;
+              &nbsp;
+              &nbsp;
+              <a href="https://github.com/sirromdev"><Icon type="github" style={{ fontSize: 20, color: '#000' }}/></a>
+              &nbsp;
+              &nbsp;
+              &nbsp;
+              <a href="https://twitter.com/DevSirrom"><Icon type="twitter" style={{ fontSize: 20, color: '#08c' }}/></a>
+              </Col>
+              <Col span={8}>
+                <p>sirromDev</p>
+              </Col>
+            </Row>
+            
+          </Footer>
         </Layout>
     )
   }
