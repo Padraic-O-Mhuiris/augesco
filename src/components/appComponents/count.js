@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Card, notification, Icon} from 'antd'
+import { Card, notification, Icon } from 'antd'
 import { inject } from "mobx-react"
 
 @inject("contractStore")
@@ -11,16 +11,15 @@ class Count extends Component {
     }
   }
 
-  async componentWillMount() {
-    const { contractStore } = this.props
-    this.setState({
-      count: await contractStore.call("Counter", "getCount", [])
-    })
-  }
-
   async componentDidMount() {
     const { contractStore } = this.props
-    contractStore.listen("Counter", "Increment", {}, (async(err, event) => {
+
+    const _count = await contractStore.call("Counter", "getCount", [])
+    this.setState({
+      count: _count
+    })
+
+    contractStore.listen("Counter", "Increment", {}, (async (err, event) => {
       this.setState({
         count: await contractStore.call("Counter", "getCount", [])
       })
@@ -50,7 +49,7 @@ class Count extends Component {
       });
     }))
 
-    contractStore.listen("Counter", "CountChange", {}, (async (err, event) => {
+    contractStore.listen("Counter", "CountChange", {}, ( async (err, event) => {
       this.setState({
         count: await contractStore.call("Counter", "getCount", [])
       })
@@ -66,12 +65,12 @@ class Count extends Component {
     }))
   }
 
-  render () {
+  render() {
     return (
-      <Card title="Count" style={{textAlign:"center"}} bordered={false}>
-        <h1>{this.state.count}</h1>
+      <Card title="Count" style={{ textAlign: "center" }} bordered={false}>
+        <h1 style={{ fontSize: "120px" }}>{this.state.count}</h1>
       </Card>
-        
+
     )
   }
 }
