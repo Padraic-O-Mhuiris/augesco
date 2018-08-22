@@ -1,22 +1,38 @@
 import React, { Component } from 'react'
+import { Row, Col, Icon } from 'antd';
 
-class Web3NoNetwork extends Component {
-  render () {
+const antIcon = <Icon type="file-add" style={
+  {
+    fontSize: 150,
+    height: "150px",
+    width: "150px",
+  }} />;
+
+class Web3NoContract extends Component {
+  render() {
     return (
-      <div uk-height-viewport="expand: true">
-        <div className="uk-section-small"></div>
-        <div className="uk-section-xlarge">
-          <div className="uk-container">
-            <h1 className="uk-heading-line uk-text-center"><span>Wrong Network</span></h1>
-            <p className="uk-text-center">Your contract was not found</p>
-            <div className="uk-flex uk-flex-center">
-              <span uk-icon="icon: file-edit; ratio: 10"></span>
-            </div>
-          </div>
-        </div>
+      <div >
+        <Row type="flex" justify="center" align="middle">
+          <Col className="barrier-col" span={6}></Col>
+          <Col className="" span={12}>
+            <Row type="flex" justify="center" align="middle">
+              <Col span={2}></Col>
+              <Col className="barrier-content" span={20}>
+
+                <h1>No contract detected on this network</h1>
+                <p>Please switch to appropriate network</p>
+                <br /><br />
+                {antIcon}
+
+              </Col>
+              <Col span={2}></Col>
+            </Row>
+          </Col>
+          <Col className="barrier-col" span={6}></Col>
+        </Row>
       </div>
     )
   }
 }
 
-export default Web3NoNetwork
+export default Web3NoContract;

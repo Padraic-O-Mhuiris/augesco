@@ -1,4 +1,4 @@
-import { types , flow } from 'mobx-state-tree'
+import { types, flow } from 'mobx-state-tree'
 import { web3Context } from "../constants"
 import { BigNumber } from 'bignumber.js';
 import getWeb3Network from "../utils/getWeb3Network"
@@ -11,6 +11,7 @@ export const Web3Store = types
     account: types.optional(types.string, ""),
     web3: types.frozen(),
     eventWeb3: types.frozen(),
+    chainEmitter: types.optional(types.frozen(), {}),
     balance: types.string,
     network: types.number,
     status: types.enumeration(
@@ -35,6 +36,9 @@ export const Web3Store = types
       self.account = _account
       self.updateStatus(web3Context.WEB3_LOADED)
     },
+    setEmitter(_emitter) {
+      self.chainEmitter = _emitter
+    },
     updateStatus(_status) {
       self.status = _status
     },
@@ -51,21 +55,29 @@ export const Web3Store = types
         self.updateStatus(web3Context.WEB3_NET_ERR)
       }
     }),
-    startPendingTxs(_cb) {
-      if(self.status === web3Context.WEB3_LOADED) {
-        ptx = self.eventWeb3.eth.subscribe('pendingTransactions', _cb)
+    startPendingTxs() {
+      if (self.status === web3Context.WEB3_LOADED) {
+        ptx = self.eventWeb3.eth.subscribe('pendingTransactions', (err, result) => {
+          self.chainEmitter.emit("ptx", result)
+        })
       }
     },
-    stopPendingTxs(_cb) {
-      ptx.unsubscribe(_cb)
+    stopPendingTxs() {
+      ptx.unsubscribe((err, result) => {
+        self.chainEmitter.emit("ptx-stopped", result)
+      })
     },
     startNewBlocks(_cb) {
-      if(self.status === web3Context.WEB3_LOADED) {
-        nbh = self.eventWeb3.eth.subscribe('newBlockHeaders', _cb)
+      if (self.status === web3Context.WEB3_LOADED) {
+        nbh = self.eventWeb3.eth.subscribe('newBlockHeaders', (err, result) => {
+          self.chainEmitter.emit("nbh", result)
+        })
       }
     },
-    stopNewBlocks(_cb) {
-      nbh.unsubscribe(_cb)
+    stopNewBlocks() {
+      nbh.unsubscribe((err, result) => {
+        self.chainEmitter.emit("nbh-stopped", result)
+      })
     },
   }))
   .views(self => ({
@@ -97,4 +109,3 @@ export const Web3Store = types
       return getWeb3Network(self.network)
     }
   }))
-  
