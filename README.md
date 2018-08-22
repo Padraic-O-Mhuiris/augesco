@@ -1,5 +1,7 @@
 # Augesco
 
+[Live Example](http://46.101.45.240:3000/)
+
 Augesco is a new ethereum dapp development framework that is intended to provide more out-of-the-box functionality for truffle-based projects. The project is similar to [drizzle](https://truffleframework.com/boxes/drizzle) which is provided by truffle. A large problem I found with drizzle and generally developing web dapps is the large amount of boilerplate code that is necessary to interact with contracts. One of the core goals of Aguesco is to abstract away this functionality and make it as easy as possible for developers to develop apps.
 
 Augesco uses [mobx-state-tree](https://github.com/mobxjs/mobx-state-tree) as it's state management system as an alternative to redux, the reasoning is best outlined [here](https://codeburst.io/the-curious-case-of-mobx-state-tree-7b4e22d461f). With it, Augesco injects two stores, **web3store** which controls blockchain interactivity and **contractstore** which handles contract logic. The project also comes with out-of-the-box dapp components like metamask lockscreens and transaction notifiers. Included in this project is a sample contract which shows how the project works. 
@@ -22,7 +24,7 @@ Alternatively, a local node + metamask can be used.
 
 - Clone this project
   
-  ```git clone git@github.com:sirromdev/augesco.git```
+  ```git clone https://github.com/sirromdev/augesco.git```
 
 - Install dependencies
 
