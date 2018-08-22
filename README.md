@@ -1,6 +1,6 @@
 # Augesco
 
-Augesco is a new ethereum dapp development framework that is intended to provide more out-of-the-box functionality for truffle-based projects. The project is similar to [drizzle](https://truffleframework.com/boxes/drizzle) which is provided by truffle. A large problem I found with drizzle and generally developing web dapps is the large amount of boilerplate code that is necessary to interact with contracts. 
+Augesco is a new ethereum dapp development framework that is intended to provide more out-of-the-box functionality for truffle-based projects. The project is similar to [drizzle](https://truffleframework.com/boxes/drizzle) which is provided by truffle. A large problem I found with drizzle and generally developing web dapps is the large amount of boilerplate code that is necessary to interact with contracts. One of the core goals of Aguesco is to abstract away this functionality and make it as easy as possible for developers to develop apps.
 
 Augesco uses [mobx-state-tree](https://github.com/mobxjs/mobx-state-tree) as it's state management system as an alternative to redux, the reasoning is best outlined [here](https://codeburst.io/the-curious-case-of-mobx-state-tree-7b4e22d461f). With it, Augesco injects two stores, **web3store** which controls blockchain interactivity and **contractstore** which handles contract logic. The project also comes with out-of-the-box dapp components like metamask lockscreens and transaction notifiers. Included in this project is a sample contract which shows how the project works. 
 
@@ -12,11 +12,11 @@ Augesco uses [mobx-state-tree](https://github.com/mobxjs/mobx-state-tree) as it'
 
 - An ethereum account with testnet ether [(rinkeby)](https://faucet.rinkeby.io/) 
 
-- This project is best fitted for public blockchains but [ganache](https://github.com/trufflesuite/ganache-cli) can still be used. Use the latest beta as it has a websocket implementation. Please note that some event functionality does not work with ganache as well as public chain
+- This project is best fitted for public blockchains but [ganache](https://github.com/trufflesuite/ganache-cli) can still be used. Use the latest beta as it has a websocket implementation. Please note that some event functionality does not work with ganache as well as it does for the public chain.
 
   ``` npm install -g ganache-cli@7.0.0-beta.0 ```
 
-Alternatively, a local node can be used. 
+Alternatively, a local node + metamask can be used. 
 
 ## Setup
 
@@ -161,7 +161,7 @@ By nesting the *on-events* to be inside the new transaction, we can concatenate 
 `web3Store.netName` - returns the current network name
 
 #### `web3Store.chainEmitter`
-The chainEmitter object works similarly to the txEmitter and is used to monitor blockchain subscriptions. As of now, subscriptions to the pending transactions and new block headers are available to be used. As of now, logs have not been implemented. The utility of being able to observe live data from the blockchain may improve user experience and possibly enable less-trusting users learn as to how the blockchain works. 
+The chainEmitter object works similarly to the txEmitter and is used to monitor blockchain subscriptions. As of now, subscriptions to the pending transactions and new block headers are available to be used. The utility of being able to observe live data from the blockchain may improve user experience and possibly enable less-trusting users learn as to how the blockchain works. 
 
 Pending transactions are started and stopped: 
 - `web3Store.startPendingTxs()`
@@ -186,7 +186,7 @@ web3Store.chainEmitter.on("nbh", data => {
 })
 ```
 
-When both subscriptions are stopped, a single unsubscribe event is fired with the eventname + *"stopped"* appended.
+When both subscriptions are stopped, a single unsubscribe event is fired with the eventname + *"-stopped"* appended.
 
 
 ## Design

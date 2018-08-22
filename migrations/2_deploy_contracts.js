@@ -1,5 +1,5 @@
 var Counter = artifacts.require("./Counter.sol");
 
-module.exports = function(deployer) {
-  deployer.deploy(Counter, 20)
+module.exports = async function(deployer) {
+  await deployer.deploy(Counter, 20)
 };

@@ -42,7 +42,7 @@
     "react-dom": "^16.4.1",
     "resolve": "1.6.0",
     "sw-precache-webpack-plugin": "0.11.4",
-    "truffle-hdwallet-provider": "0.0.6",
+    "truffle-hdwallet-provider": "^1.0.0-web3one.0",
     "url-loader": "0.6.2",
     "web3": "^1.0.0-beta.33",
     "webpack": "3.8.1",
