@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Web3Gate from "./components/web3Gate"
+import { inject, observer } from "mobx-react"
 import "./assets/less/index"
 
 import AppContent from "./components/appComponents/appContent"
@@ -9,8 +10,10 @@ import AppContent from "./components/appComponents/appContent"
  */
 const contractCounter = require("../build/contracts/Counter.json")
 
-class App extends Component {
+@inject("augesco")
+@observer class App extends Component {
   render() {
+    console.log(this.props)
     return (
       <Web3Gate
         /**
