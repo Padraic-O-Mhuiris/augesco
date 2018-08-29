@@ -16,16 +16,11 @@ const contractCounter = require("../build/contracts/Counter.json")
     console.log(this.props)
     return (
       <Web3Gate
-        /**
-         * pass the declared contract objects as props here
-         */
+      
         contracts={[
           contractCounter
         ]}
 
-        /**
-         * declare websocket endpoints for event management here
-         */
         event_providers={{
           main: "wss://mainnet.infura.io/ws",
           rinkeby: "wss://rinkeby.infura.io/ws",

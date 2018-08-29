@@ -23,9 +23,10 @@ const contractStore = ContractStore.create({
 
 const augesco = AugescoStore.create({
   account: "",
-  balance: ""
+  balance: "",
+  network: 0,
+  status: web3Context.WEB3_LOADING  
 })
-
 
 const app = (
   <Provider
