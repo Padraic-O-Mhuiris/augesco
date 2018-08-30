@@ -10,7 +10,7 @@ import Web3NoContract from "./web3Components/web3NoContract"
 import ContractGate from "./contractComponents/contractGate"
 import Web3 from 'web3'
 
-@inject("web3Store")
+@inject("augesco")
 @observer class Web3Gate extends Component {
   constructor(props) {
     super(props)
@@ -20,45 +20,47 @@ import Web3 from 'web3'
   }
 
   hasProviders() {
-    const { web3Store, event_providers } = this.props
-    return event_providers[web3Store.netName]
+    const { augesco, event_providers } = this.props
+    return event_providers[augesco.netName]
   }
 
   fetchAccounts() {
-    const { web3Store } = this.props
+    const { augesco } = this.props
 
-    if(web3Store.status !== web3Context.WEB3_CONTRACT_ERR && web3Store.status !== web3Context.WEB3_NET_ERR) {
-      web3Store.web3.eth.getAccounts((err, accounts) => {
+    if( augesco.status !== web3Context.WEB3_CONTRACT_ERR && 
+        augesco.status !== web3Context.WEB3_NET_ERR) 
+      {
+      augesco.web3.eth.getAccounts((err, accounts) => {
         if(err) {
           console.log(err)
-          web3Store.updateStatus(web3Context.WEB3_LOAD_ERR)
+          augesco.updateStatus(web3Context.WEB3_LOAD_ERR)
         } 
         else {
           if(accounts.length === 0) {
-            web3Store.updateStatus(web3Context.WEB3_LOCKED)
+            augesco.updateStatus(web3Context.WEB3_LOCKED)
           } 
           else {
-            web3Store.determineNetwork().then((network) => {
+            augesco.determineNetwork().then((network) => {
               if(network !== undefined) {
 
-                web3Store.updateNetwork(network)
+                augesco.updateNetwork(network)
 
                 const provider = this.hasProviders()
 
                 if(provider !== undefined) {  
-                  const eventWeb3 = new Web3(new Web3.providers.WebsocketProvider(provider))
-                  web3Store.setEventWeb3(eventWeb3)
+                  const web3_ws = new Web3(new Web3.providers.WebsocketProvider(provider))
+                  augesco.setWeb3Websocket(web3_ws)
 
-                  if(accounts[0] !== web3Store.account) {
-                    web3Store.setAccount(accounts[0])
+                  if(accounts[0] !== augesco.account) {
+                    augesco.setAccount(accounts[0])
                   } 
                   this.fetchBalance()
-                  web3Store.updateStatus(web3Context.WEB3_LOADED)
+                  augesco.updateStatus(web3Context.WEB3_LOADED)
                 } else {
-                  web3Store.updateStatus(web3Context.WEB3_LOADING)
+                  augesco.updateStatus(web3Context.WEB3_LOADING)
                 }
               } else {
-                web3Store.updateStatus(web3Context.WEB3_NET_ERR)
+                augesco.updateStatus(web3Context.WEB3_NET_ERR)
               }
             })
           }
@@ -68,15 +70,15 @@ import Web3 from 'web3'
   }
 
   fetchBalance() {
-    const { web3Store } = this.props
-    if(web3Store.status === web3Context.WEB3_LOADED) {
-      web3Store.web3.eth.getBalance(web3Store.account, (err, _balance) => {
+    const { augesco } = this.props
+    if(augesco.status === web3Context.WEB3_LOADED) {
+      augesco.web3.eth.getBalance(augesco.account, (err, _balance) => {
         if(err) {
           console.log(err)
         }
         else {
-          if(_balance !== web3Store.balance) {
-            web3Store.updateBalance(_balance)
+          if(_balance !== augesco.balance) {
+            augesco.updateBalance(_balance)
           }
         }
       })
@@ -84,24 +86,25 @@ import Web3 from 'web3'
   }
   
   instantiateWeb3() {
-    const { web3Store } = this.props
+    const { augesco } = this.props
     this.fetchAccounts()
     this.BalanceInterval = setInterval(() => this.fetchBalance(), 1000);
     
-    web3Store.web3.currentProvider.publicConfigStore.on('update', () => {
+    augesco.web3.currentProvider.publicConfigStore.on('update', () => {
       this.fetchAccounts()
     });
 
     window.addEventListener('offline', function(e) { 
-      web3Store.updateStatus(web3Context.WEB3_NET_ERR) 
+      augesco.updateStatus(web3Context.WEB3_NET_ERR) 
     });
     window.addEventListener('online', function(e) { 
-      web3Store.updateStatus(web3Context.WEB3_LOADING)
+      augesco.updateStatus(web3Context.WEB3_LOADING)
       window.location.reload()
     });
   }
 
   componentWillMount() {
+    console.log(this.props)
     const online = navigator.onLine;
     if(online) {
       getWeb3.then(results => {
@@ -113,22 +116,23 @@ import Web3 from 'web3'
         console.log('Error finding web3.')
       })
     } else {
-      this.props.web3Store.updateStatus(web3Context.WEB3_NET_ERR)
+      this.props.augesco.updateStatus(web3Context.WEB3_NET_ERR)
     }
   }
   
   componentDidUpdate() {
+    const { augesco } = this.props
     if(this.state.web3 !== null) {
-      this.props.web3Store.setWeb3(this.state.web3)
+      augesco.setWeb3(this.state.web3)
       this.instantiateWeb3()
     } else {
-      this.props.web3Store.updateStatus(web3Context.WEB3_LOAD_ERR)
+      this.props.augesco.updateStatus(web3Context.WEB3_LOAD_ERR)
     }
   }
 
   render () {
-    const { web3Store } = this.props
-    switch(web3Store.status) {
+    const { augesco } = this.props
+    switch(augesco.status) {
       case web3Context.WEB3_LOADED:
         /* 
         **  The main application content is rendered here,
@@ -136,12 +140,14 @@ import Web3 from 'web3'
         **  props.children below
         */
         return (
-          <ContractGate
-            contracts={this.props.contracts}
-            event_providers={this.props.event_providers}
-          >
+          // <ContractGate
+          //   contracts={this.props.contracts}
+          //   event_providers={this.props.event_providers}
+          // >
+          <div>
             {this.props.children}
-          </ContractGate>
+          </div>
+          // </ContractGate>
         )
       case web3Context.WEB3_LOADING:
         /* 
@@ -185,9 +191,7 @@ import Web3 from 'web3'
         )
       default:
         return (
-          <div>
-            SHOULD NOT REACH THIS CASE
-          </div>
+          <Web3Loading/>
         )
     }
   }

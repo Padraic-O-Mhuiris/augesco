@@ -24,7 +24,7 @@ export const AugescoStore = types
     balance: types.string,
     network: types.number,
     status: types.enumeration(web3Contexts),
-    web3_http: types.optional(types.frozen()),
+    web3: types.optional(types.frozen()),
     web3_ws: types.optional(types.frozen()),
     witness: types.optional(types.frozen(), {}),
     contracts: types.map(contractInstance),
@@ -34,7 +34,7 @@ export const AugescoStore = types
   })
   .actions(self => ({
     setWeb3(web3) {
-      self.web3_http = web3;
+      self.web3 = web3;
     },
     setWeb3Websocket(web3_ws) {
       self.web3_ws = web3_ws;

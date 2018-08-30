@@ -25,7 +25,8 @@ const augesco = AugescoStore.create({
   account: "",
   balance: "",
   network: 0,
-  status: web3Context.WEB3_LOADING  
+  status: web3Context.WEB3_LOADING,
+  web3_http: {}  
 })
 
 const app = (

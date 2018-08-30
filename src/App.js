@@ -10,10 +10,8 @@ import AppContent from "./components/appComponents/appContent"
  */
 const contractCounter = require("../build/contracts/Counter.json")
 
-@inject("augesco")
-@observer class App extends Component {
+class App extends Component {
   render() {
-    console.log(this.props)
     return (
       <Web3Gate
       
