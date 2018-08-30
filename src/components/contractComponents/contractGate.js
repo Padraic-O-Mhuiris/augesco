@@ -6,8 +6,7 @@ import EventGate from "../eventComponents/eventGate"
 
 const EventEmitter = require('events')
 
-@inject("web3Store")
-@inject("contractStore")
+@inject("augesco")
 @observer class ContractGate extends Component {
 
   parseContractAbi(key, _abi) {
@@ -45,32 +44,31 @@ const EventEmitter = require('events')
   }
 
   parseContract(_contract) {
-    const { web3Store } = this.props
-    const { contractStore } = this.props
+    const { augesco } = this.props
 
     var check = true
     for (const network of Object.keys(_contract.networks)) {
-      if (network === web3Store.network.toString()) {
+      if (network === augesco.network.toString()) {
         check = !check
         break
       }
     }
 
     if (check) {
-      web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
+      augesco.updateStatus(web3Context.WEB3_CONTRACT_ERR)
     } else {
       const contractName = _contract.contractName
       const contractAbi = _contract.abi
-      const contractTxHash = _contract.networks[web3Store.network].transactionHash
-      const contractAddress = _contract.networks[web3Store.network].address
+      const contractTxHash = _contract.networks[augesco.network].transactionHash
+      const contractAddress = _contract.networks[augesco.network].address
 
-      const contractWeb3 = new web3Store.web3.eth.Contract(contractAbi, contractAddress)
+      const contractWeb3 = new augesco.web3.eth.Contract(contractAbi, contractAddress)
       const contractMethods = this.parseContractMethods(contractWeb3.methods, contractAbi)
 
-      const eventContract = new web3Store.eventWeb3.eth.Contract(contractAbi, contractAddress)
+      const eventContract = new augesco.web3_ws.eth.Contract(contractAbi, contractAddress)
       const contractEvents = this.parseContractEvents(eventContract.events)
 
-      contractStore.add(
+      augesco.add(
         contractName,
         contractAbi,
         contractTxHash,
@@ -83,38 +81,34 @@ const EventEmitter = require('events')
     }
   }
 
-
-
   componentDidMount() {
-    const { contractStore } = this.props
-    const { web3Store } = this.props
-    
-    if(!contractStore.loaded) {
+    const { augesco } = this.props
+    if(!augesco.loaded) {
       for (const contract of this.props.contracts) {
+
         this.parseContract(contract)
       }
-    
 
-      if (web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
+      if (augesco.status !== web3Context.WEB3_CONTRACT_ERR) {
         const txEmitter = new EventEmitter()
         txEmitter.setMaxListeners(100)
-        web3Store.setEmitter(txEmitter)
-        contractStore.setEmitter(txEmitter)
-        contractStore.setWeb3(web3Store.web3)
-        contractStore.toggleLoaded()
+        augesco.setWitness(txEmitter)
+        augesco.toggleLoaded()
       }
     }
 
-    web3Store.startNewBlocks()
+    augesco.startNewBlocks()
   }
 
   render() {
-    const { contractStore } = this.props
-    if (contractStore.loaded) {
+    const { augesco } = this.props
+    if (augesco.loaded) {
       return (
-        <EventGate>
+        //<EventGate>
+          <div>
           {this.props.children}
-        </EventGate>
+          </div>
+        //</EventGate>
       )
     } else {
       return (

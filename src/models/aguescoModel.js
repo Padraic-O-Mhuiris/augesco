@@ -147,7 +147,7 @@ export const AugescoStore = types
     }),
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {
-        ptx = self.eventWeb3.eth.subscribe(
+        ptx = self.web3_ws.eth.subscribe(
           "pendingTransactions",
           (err, result) => {
             self.witness.emit("ptx", result);
@@ -162,7 +162,7 @@ export const AugescoStore = types
     },
     startNewBlocks(_cb) {
       if (self.status === web3Context.WEB3_LOADED) {
-        nbh = self.eventWeb3.eth.subscribe("newBlockHeaders", (err, result) => {
+        nbh = self.web3_ws.eth.subscribe("newBlockHeaders", (err, result) => {
           self.witness.emit("nbh", result);
         });
       }

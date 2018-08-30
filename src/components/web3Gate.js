@@ -140,14 +140,12 @@ import Web3 from 'web3'
         **  props.children below
         */
         return (
-          // <ContractGate
-          //   contracts={this.props.contracts}
-          //   event_providers={this.props.event_providers}
-          // >
-          <div>
+          <ContractGate
+            contracts={this.props.contracts}
+            event_providers={this.props.event_providers}
+          >
             {this.props.children}
-          </div>
-          // </ContractGate>
+          </ContractGate>
         )
       case web3Context.WEB3_LOADING:
         /* 
