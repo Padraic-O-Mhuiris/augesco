@@ -1,5 +1,7 @@
 import { types, flow } from "mobx-state-tree";
 import { web3Context } from "../constants";
+import { BigNumber } from 'bignumber.js';
+import getWeb3Network from "../utils/getWeb3Network"
 
 const web3Contexts = [
   web3Context.WEB3_LOAD_ERR,
@@ -10,8 +12,8 @@ const web3Contexts = [
   web3Context.WEB3_CONTRACT_ERR
 ];
 
-let ptx = null
-let nbh = null
+let ptx = null;
+let nbh = null;
 
 const contractInstance = {};
 const txInstance = {};
@@ -32,56 +34,85 @@ export const AugescoStore = types
   })
   .actions(self => ({
     setWeb3(web3) {
-      self.web3_http = web3
+      self.web3_http = web3;
     },
     setWeb3Websocket(web3_ws) {
-      self.web3_ws= web3_ws
+      self.web3_ws = web3_ws;
     },
     setAccount(account) {
-      self.account = account
-      self.updateStatus(web3Context.WEB3_LOADED)
+      self.account = account;
+      self.updateStatus(web3Context.WEB3_LOADED);
     },
     setEmitter(emitter) {
-      self.witness = emitter
+      self.witness = emitter;
     },
-    updateStatus(_status) {
-      self.status = _status
+    updateStatus(status) {
+      self.status = status;
     },
-    updateBalance(_balance) {
-      self.balance = _balance
+    updateBalance(balance) {
+      self.balance = balance;
     },
-    updateNetwork(_network) {
-      self.network = _network
+    updateNetwork(network) {
+      self.network = network;
     },
     determineNetwork: flow(function* determineNetwork() {
       try {
-        return yield self.web3.eth.net.getId()
+        return yield self.web3.eth.net.getId();
       } catch (error) {
-        self.updateStatus(web3Context.WEB3_NET_ERR)
+        self.updateStatus(web3Context.WEB3_NET_ERR);
       }
     }),
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {
-        ptx = self.eventWeb3.eth.subscribe('pendingTransactions', (err, result) => {
-          self.chainEmitter.emit("ptx", result)
-        })
+        ptx = self.eventWeb3.eth.subscribe(
+          "pendingTransactions",
+          (err, result) => {
+            self.witness.emit("ptx", result);
+          }
+        );
       }
     },
     stopPendingTxs() {
       ptx.unsubscribe((err, result) => {
-        self.chainEmitter.emit("ptx-stopped", result)
-      })
+        self.witness.emit("ptx-stopped", result);
+      });
     },
     startNewBlocks(_cb) {
       if (self.status === web3Context.WEB3_LOADED) {
-        nbh = self.eventWeb3.eth.subscribe('newBlockHeaders', (err, result) => {
-          self.chainEmitter.emit("nbh", result)
-        })
+        nbh = self.eventWeb3.eth.subscribe("newBlockHeaders", (err, result) => {
+          self.witness.emit("nbh", result);
+        });
       }
     },
     stopNewBlocks() {
       nbh.unsubscribe((err, result) => {
-        self.chainEmitter.emit("nbh-stopped", result)
-      })
+        self.witness.emit("nbh-stopped", result);
+      });
     }
   }))
+  .views(self => ({
+    get balanceEth() {
+      const bal = new BigNumber(self.balance);
+      return {
+        balance: bal.shiftedBy(-18).toString(),
+        denom: "eth"
+      };
+    },
+    get balanceGwei() {
+      const bal = new BigNumber(self.balance);
+      return {
+        balance: bal.shiftedBy(-9).toString(),
+        denom: "gwei"
+      };
+    },
+    get balanceWei() {
+      const bal = new BigNumber(self.balance);
+      return {
+        balance: bal.toString(),
+        denom: "wei"
+      };
+    },
+    get netName() {
+      return getWeb3Network(self.network);
+    }
+  }));
