@@ -8,8 +8,7 @@ const etherscan = {
   4: "https://rinkeby.etherscan.io/block/"
 }
 
-@inject("web3Store")
-@inject("contractStore")
+@inject("augesco")
 @observer class ChainLog extends Component {
   constructor(props) {
     super(props)
@@ -22,10 +21,10 @@ const etherscan = {
   }
 
   componentDidMount() {
-    const { web3Store } = this.props
+    const { augesco } = this.props
 
     this.timerInterval = setInterval(() => this.setState({ timer: this.state.timer + 1}), 1000)
-    web3Store.chainEmitter.on("nbh", data => {
+    augesco.witness.on("nbh", data => {
       const newLogs = [...this.state.logs]
       let obj = {}
       
@@ -48,7 +47,7 @@ const etherscan = {
   }
   
   render() {
-    const weblink = etherscan[this.props.web3Store.network]
+    const weblink = etherscan[this.props.augesco.network]
     return (
       <List
         header={

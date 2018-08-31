@@ -1,76 +1,84 @@
-import React, { Component } from 'react'
-import { inject, observer } from "mobx-react"
-import { web3Context } from "../../constants"
-import ContractLoading from "./contractLoading"
-import EventGate from "../eventComponents/eventGate"
+import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
+import { web3Context } from "../../constants";
+import ContractLoading from "./contractLoading";
+import EventGate from "../eventComponents/eventGate";
 
-const EventEmitter = require('events')
+const EventEmitter = require("events");
 
-@inject("web3Store")
-@inject("contractStore")
-@observer class ContractGate extends Component {
-
+@inject("augesco")
+@observer
+class ContractGate extends Component {
   parseContractAbi(key, _abi) {
     for (const method of _abi) {
       if (method.name === key) {
-        return method
+        return method;
       }
     }
-    return {}
+    return {};
   }
 
   parseContractEvents(_eventsWeb3) {
-    const eventObj = {}
+    const eventObj = {};
     for (const event of Object.keys(_eventsWeb3)) {
       if (/(^[a-zA-Z]+$)/.test(event)) {
-        eventObj[event] = _eventsWeb3[event]
+        eventObj[event] = _eventsWeb3[event];
       }
     }
-    return eventObj
+    return eventObj;
   }
 
   parseContractMethods(_methodsWeb3, _abi) {
-    const methodObj = {}
+    const methodObj = {};
     for (const method of Object.keys(_methodsWeb3)) {
       if (/([a-z]*[()])/.test(method)) {
-        const obj = {}
-        const key = method.split('(')[0]
-        obj["func"] = _methodsWeb3[method]
-        const methodAbi = this.parseContractAbi(key, _abi)
-        methodAbi["func"] = _methodsWeb3[method]
-        methodObj[key] = methodAbi
+        const obj = {};
+        const key = method.split("(")[0];
+        obj["func"] = _methodsWeb3[method];
+        const methodAbi = this.parseContractAbi(key, _abi);
+        methodAbi["func"] = _methodsWeb3[method];
+        methodObj[key] = methodAbi;
       }
     }
-    return methodObj
+    return methodObj;
   }
 
   parseContract(_contract) {
-    const { web3Store } = this.props
-    const { contractStore } = this.props
+    const { augesco } = this.props;
 
-    var check = true
+    var check = true;
     for (const network of Object.keys(_contract.networks)) {
-      if (network === web3Store.network.toString()) {
-        check = !check
-        break
+      if (network === augesco.network.toString()) {
+        check = !check;
+        break;
       }
     }
 
     if (check) {
-      web3Store.updateStatus(web3Context.WEB3_CONTRACT_ERR)
+      augesco.updateStatus(web3Context.WEB3_CONTRACT_ERR);
     } else {
-      const contractName = _contract.contractName
-      const contractAbi = _contract.abi
-      const contractTxHash = _contract.networks[web3Store.network].transactionHash
-      const contractAddress = _contract.networks[web3Store.network].address
+      const contractName = _contract.contractName;
+      const contractAbi = _contract.abi;
+      const contractTxHash =
+        _contract.networks[augesco.network].transactionHash;
+      const contractAddress = _contract.networks[augesco.network].address;
 
-      const contractWeb3 = new web3Store.web3.eth.Contract(contractAbi, contractAddress)
-      const contractMethods = this.parseContractMethods(contractWeb3.methods, contractAbi)
+      const contractWeb3 = new augesco.web3.eth.Contract(
+        contractAbi,
+        contractAddress
+      );
+      const contractMethods = this.parseContractMethods(
+        contractWeb3.methods,
+        contractAbi
+      );
 
-      const eventContract = new web3Store.eventWeb3.eth.Contract(contractAbi, contractAddress)
-      const contractEvents = this.parseContractEvents(eventContract.events)
+      const eventContract = new augesco.web3_ws.eth.Contract(
+        contractAbi,
+        contractAddress
+      );
+      const contractEvents = this.parseContractEvents(eventContract.events);
 
-      contractStore.add(
+      augesco.add(
         contractName,
         contractAbi,
         contractTxHash,
@@ -79,47 +87,34 @@ const EventEmitter = require('events')
         contractMethods,
         eventContract,
         contractEvents
-      )
+      );
     }
   }
 
-
-
   componentDidMount() {
-    const { contractStore } = this.props
-    const { web3Store } = this.props
-    
-    if(!contractStore.loaded) {
+    const { augesco } = this.props;
+    if (!augesco.loaded) {
       for (const contract of this.props.contracts) {
-        this.parseContract(contract)
+        this.parseContract(contract);
       }
-    
 
-      if (web3Store.status !== web3Context.WEB3_CONTRACT_ERR) {
-        const txEmitter = new EventEmitter()
-        txEmitter.setMaxListeners(100)
-        web3Store.setEmitter(txEmitter)
-        contractStore.setEmitter(txEmitter)
-        contractStore.setWeb3(web3Store.web3)
-        contractStore.toggleLoaded()
+      if (augesco.status !== web3Context.WEB3_CONTRACT_ERR) {
+        const emitter = new EventEmitter();
+        emitter.setMaxListeners(100);
+        augesco.setWitness(emitter);
+        augesco.toggleLoaded();
       }
     }
 
-    web3Store.startNewBlocks()
+    augesco.startNewBlocks();
   }
 
   render() {
-    const { contractStore } = this.props
-    if (contractStore.loaded) {
-      return (
-        <EventGate>
-          {this.props.children}
-        </EventGate>
-      )
+    const { augesco } = this.props;
+    if (augesco.loaded) {
+      return <EventGate>{this.props.children}</EventGate>;
     } else {
-      return (
-        <ContractLoading />
-      )
+      return <ContractLoading />;
     }
   }
 }

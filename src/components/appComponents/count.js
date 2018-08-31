@@ -1,28 +1,29 @@
-import React, { Component } from 'react'
-import { Card, notification, Icon } from 'antd'
-import { inject } from "mobx-react"
+import React, { Component } from "react";
+import { Card, notification, Icon } from "antd";
+import { inject, observer } from "mobx-react";
 
-@inject("contractStore")
+@inject("augesco")
+@observer
 class Count extends Component {
   constructor(props) {
     super(props);
     this.state = {
       count: 0
-    }
+    };
   }
 
   async componentDidMount() {
-    const { contractStore } = this.props
+    const { augesco } = this.props;
 
-    const _count = await contractStore.call("Counter", "getCount", [])
+    const _count = await augesco.call("Counter", "getCount", []);
     this.setState({
       count: _count
-    })
+    });
 
-    contractStore.listen("Counter", "Increment", {}, (async (err, event) => {
+    augesco.listen("Counter", "Increment", {}, async (err, event) => {
       this.setState({
-        count: await contractStore.call("Counter", "getCount", [])
-      })
+        count: await augesco.call("Counter", "getCount", [])
+      });
 
       notification.open({
         key: "event-increment",
@@ -30,14 +31,14 @@ class Count extends Component {
         description: "Contract event fired : Count has incremented",
         duration: 5,
         placement: "bottomLeft",
-        icon: <Icon type="plus" style={{ color: 'black' }} />
+        icon: <Icon type="plus" style={{ color: "black" }} />
       });
-    }))
+    });
 
-    contractStore.listen("Counter", "Decrement", {}, (async (err, event) => {
+    augesco.listen("Counter", "Decrement", {}, async (err, event) => {
       this.setState({
-        count: await contractStore.call("Counter", "getCount", [])
-      })
+        count: await augesco.call("Counter", "getCount", [])
+      });
 
       notification.open({
         key: "event-decrement",
@@ -45,14 +46,14 @@ class Count extends Component {
         description: "Contract event fired : Count has decremented",
         duration: 5,
         placement: "bottomLeft",
-        icon: <Icon type="minus" style={{ color: 'black' }} />
+        icon: <Icon type="minus" style={{ color: "black" }} />
       });
-    }))
+    });
 
-    contractStore.listen("Counter", "CountChange", {}, ( async (err, event) => {
+    augesco.listen("Counter", "CountChange", {}, async (err, event) => {
       this.setState({
-        count: await contractStore.call("Counter", "getCount", [])
-      })
+        count: await augesco.call("Counter", "getCount", [])
+      });
 
       notification.open({
         key: "event-changecount",
@@ -60,9 +61,9 @@ class Count extends Component {
         description: "Contract event fired : Count has changed",
         duration: 5,
         placement: "bottomLeft",
-        icon: <Icon type="reload" style={{ color: 'black' }} />
+        icon: <Icon type="reload" style={{ color: "black" }} />
       });
-    }))
+    });
   }
 
   render() {
@@ -70,8 +71,7 @@ class Count extends Component {
       <Card title="Count" style={{ textAlign: "center" }} bordered={false}>
         <h1 style={{ fontSize: "120px" }}>{this.state.count}</h1>
       </Card>
-
-    )
+    );
   }
 }
 
