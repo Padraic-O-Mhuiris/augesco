@@ -25,7 +25,7 @@ export const transactionInstance = types
       }
     },
     txStart() {
-      getRoot(self).txEmitter.emit(txStatus.NEW, self.hash)
+      getRoot(self).witness.emit(txStatus.NEW, self.hash)
       self.interval = setInterval(() => self.monitorTx(self.hash), 1000)
     },
     txEnd() {
@@ -78,15 +78,15 @@ export const transactionInstance = types
       }
     },
     emitPending(txData) {
-      getRoot(self).txEmitter.emit(txStatus.PENDING + txData.hash, txData)
+      getRoot(self).witness.emit(txStatus.PENDING + txData.hash, txData)
     },
     emitMined(txData) {
-      getRoot(self).txEmitter.emit(txStatus.MINED + txData.transactionHash, txData)
+      getRoot(self).witness.emit(txStatus.MINED + txData.transactionHash, txData)
     },
     emitFailed(txData) {
-      getRoot(self).txEmitter.emit(txStatus.FAILED + txData.transactionHash, txData)
+      getRoot(self).witness.emit(txStatus.FAILED + txData.transactionHash, txData)
     },
     emitSuccess(txData) {
-      getRoot(self).txEmitter.emit(txStatus.SUCCESS + txData.transactionHash, txData)
+      getRoot(self).witness.emit(txStatus.SUCCESS + txData.transactionHash, txData)
     }
   }))

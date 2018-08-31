@@ -21,7 +21,7 @@ class App extends Component {
 
         event_providers={{
           main: "wss://mainnet.infura.io/ws",
-          rinkeby: "wss://rinkeby.infura.io/ws",
+          rinkeby: "ws://127.0.0.1:8546",
           local: "ws://127.0.0.1:8545"
         }}
       >
