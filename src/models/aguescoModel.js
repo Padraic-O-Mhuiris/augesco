@@ -20,9 +20,8 @@ let nbh = null;
 
 const getWeb3Context = context => {
   if (
-    context === web3Context.WEB3_CONTRACT_ERR ||
-    context === web3Context.WEB3_NET_ERR ||
-    context === web3Context.WEB3_LOADING
+    context !== web3Context.WEB3_CONTRACT_ERR &&
+    context !== web3Context.WEB3_NET_ERR 
   ) {
     return true;
   } else {
@@ -78,18 +77,17 @@ export const AugescoStore = types
     setWeb3Websocket(web3_ws) {
       self.web3_ws = web3_ws;
     },
-    setAccount(account) {
-      self.account = account;
-      self.updateStatus(web3Context.WEB3_LOADED);
-    },
     setWitness(emitter) {
       self.witness = emitter;
     },
     updateStatus(status) {
       self.status = status;
     },
-    updateBalance(balance) {
-      self.balance = balance;
+    updateAccount(account) {
+      self.account = account;
+    },
+    updateBalance() {
+      self.determineBalance()
     },
     updateNetwork(network) {
       self.network = network;
@@ -108,6 +106,14 @@ export const AugescoStore = types
         self.updateStatus(web3Context.WEB3_LOAD_ERR);
       }
     }),
+    determineBalance: flow(function* determineBalance() {
+      try {
+        const balance = yield self.web3.eth.getBalance(self.account)
+        self.balance = balance
+      } catch (error) {
+        console.error(error)
+      }
+    }),
     updateAccountStatus: flow(function* updateAccountStatus(providers) {
       try {
         if (getWeb3Context(self.status)) {
@@ -117,7 +123,7 @@ export const AugescoStore = types
             throw new Error("No account found");
           }
 
-          if (newAccount[0] === self.account) {
+          if (newAccount[0] === self.account && self.status !== web3Context.WEB3_LOCKED) {
             return true;
           }
 
@@ -134,12 +140,13 @@ export const AugescoStore = types
             throw new Error("No provider given");
           }
 
-          self.setAccount(newAccount[0]);
+          self.updateAccount(newAccount[0]);
           const newWeb3WsProvider = new Web3(
             new Web3.providers.WebsocketProvider(provider)
           );
           self.setWeb3Websocket(newWeb3WsProvider);
           self.updateStatus(web3Context.WEB3_LOADED);
+          self.updateBalance()
         }
       } catch (error) {
         console.error(error);
