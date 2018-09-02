@@ -20,15 +20,11 @@ class App extends Component {
 
         event_providers={{
           main: "wss://mainnet.infura.io/ws",
-          rinkeby: "ws://127.0.0.1:8546",
+          rinkeby: "wss://rinkeby.infura.io/ws",
           local: "ws://127.0.0.1:8545"
         }}
       >
-        {
-          // AppContent can be deleted
-        }
-        <AppContent />
-        
+        <AppContent /> 
       </Web3Gate>
     )
   }
