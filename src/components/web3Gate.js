@@ -8,7 +8,6 @@ import Web3NotInstalled from "./web3Components/web3NotInstalled";
 import Web3NoNetwork from "./web3Components/web3NoNetwork";
 import Web3NoContract from "./web3Components/web3NoContract";
 import ContractGate from "./contractComponents/contractGate";
-import Web3 from "web3";
 
 @inject("augesco")
 @observer
@@ -20,79 +19,12 @@ class Web3Gate extends Component {
     };
   }
 
-  hasProviders() {
-    const { augesco, event_providers } = this.props;
-    return event_providers[augesco.netName];
-  }
-
-  fetchAccounts() {
-    const { augesco } = this.props;
-
-    if (
-      augesco.status !== web3Context.WEB3_CONTRACT_ERR &&
-      augesco.status !== web3Context.WEB3_NET_ERR
-    ) {
-      augesco.web3.eth.getAccounts((err, accounts) => {
-        if (err) {
-          console.log(err);
-          augesco.updateStatus(web3Context.WEB3_LOAD_ERR);
-        } else {
-          if (accounts.length === 0) {
-            augesco.updateStatus(web3Context.WEB3_LOCKED);
-          } else {
-            augesco.determineNetwork().then(network => {
-              if (network !== undefined) {
-                augesco.updateNetwork(network);
-
-                const provider = this.hasProviders();
-
-                if (provider !== undefined) {
-                  if (augesco.web3_ws === undefined) {
-                    const web3_ws = new Web3(
-                      new Web3.providers.WebsocketProvider(provider)
-                    );
-                    augesco.setWeb3Websocket(web3_ws);
-                  }
-                } else {
-                  augesco.updateStatus(web3Context.WEB3_LOADING);
-                }
-
-                if (accounts[0] !== augesco.account) {
-                  augesco.setAccount(accounts[0]);
-                }
-                this.fetchBalance();
-                augesco.updateStatus(web3Context.WEB3_LOADED);
-              } else {
-                augesco.updateStatus(web3Context.WEB3_NET_ERR);
-              }
-            });
-          }
-        }
-      });
-    }
-  }
-
-  fetchBalance() {
-    const { augesco } = this.props;
-    if (augesco.status === web3Context.WEB3_LOADED) {
-      augesco.web3.eth.getBalance(augesco.account, (err, _balance) => {
-        if (err) {
-          console.log(err);
-        } else {
-          if (_balance !== augesco.balance) {
-            augesco.updateBalance(_balance);
-          }
-        }
-      });
-    }
-  }
-
   instantiateWeb3() {
-    const { augesco } = this.props;
-    this.fetchAccounts();
+    const { augesco, event_providers } = this.props;
+    augesco.updateAccountStatus(event_providers)
 
     augesco.web3.currentProvider.publicConfigStore.on("update", () => {
-      this.fetchAccounts();
+      augesco.updateAccountStatus(event_providers)
     });
 
     window.addEventListener("offline", function(e) {
@@ -105,7 +37,6 @@ class Web3Gate extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props);
     const online = navigator.onLine;
     if (online) {
       getWeb3

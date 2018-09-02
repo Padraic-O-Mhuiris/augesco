@@ -1,10 +1,10 @@
 import { types, flow } from "mobx-state-tree";
-import { web3Context } from "../constants";
-import { BigNumber } from 'bignumber.js';
-import getWeb3Network from "../utils/getWeb3Network"
-import { contractInstance } from "./instanceContract"
-import { transactionInstance } from "./instanceTx"
-import { txStatus } from "../constants"
+import { BigNumber } from "bignumber.js";
+import getWeb3Network from "../utils/getWeb3Network";
+import Web3 from "web3";
+import { contractInstance } from "./instanceContract";
+import { transactionInstance } from "./instanceTx";
+import { txStatus, web3Context } from "../constants";
 
 const web3Contexts = [
   web3Context.WEB3_LOAD_ERR,
@@ -17,6 +17,17 @@ const web3Contexts = [
 
 let ptx = null;
 let nbh = null;
+
+const getWeb3Context = context => {
+  if (
+    context !== web3Context.WEB3_CONTRACT_ERR &&
+    context !== web3Context.WEB3_NET_ERR 
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
 export const AugescoStore = types
   .model({
@@ -33,7 +44,16 @@ export const AugescoStore = types
     info: false
   })
   .actions(self => ({
-    add(_id, _abi, _txHash, _address, _contract, _methods, _eventContract, _events) {
+    add(
+      _id,
+      _abi,
+      _txHash,
+      _address,
+      _contract,
+      _methods,
+      _eventContract,
+      _events
+    ) {
       self.contracts.set(_id, {
         name: _id,
         abi: _abi,
@@ -43,13 +63,13 @@ export const AugescoStore = types
         methods: _methods,
         eventContract: _eventContract,
         events: _events
-      })
+      });
     },
     toggleLoaded() {
-      self.loaded = !self.loaded
+      self.loaded = !self.loaded;
     },
     toggleInfo() {
-      self.info = !self.info
+      self.info = !self.info;
     },
     setWeb3(web3) {
       self.web3 = web3;
@@ -57,86 +77,20 @@ export const AugescoStore = types
     setWeb3Websocket(web3_ws) {
       self.web3_ws = web3_ws;
     },
-    setAccount(account) {
-      self.account = account;
-      self.updateStatus(web3Context.WEB3_LOADED);
-    },
     setWitness(emitter) {
       self.witness = emitter;
     },
     updateStatus(status) {
       self.status = status;
     },
-    updateBalance(balance) {
-      self.balance = balance;
+    updateAccount(account) {
+      self.account = account;
+    },
+    updateBalance() {
+      self.determineBalance()
     },
     updateNetwork(network) {
       self.network = network;
-    },
-    use(_id) {
-      if (self.loaded && self.contracts.has(_id)) {
-        return self.contracts.get(_id)
-      } else {
-        return {}
-      }
-    },
-    getMethod(_id, _method) {
-      if (self.loaded && self.contracts.has(_id)) {
-        return self.use(_id).getMethod(_method)
-      } else {
-        return {}
-      }
-    },
-    createTx(_id) {
-      self.transactions.set(_id, {
-        hash: _id,
-        receipt: {},
-        status: txStatus.PENDING
-      })
-    },
-    useTx(_id) {
-      if (self.loaded && self.transactions.has(_id)) {
-        return self.transactions.get(_id)
-      } else {
-        return {}
-      }
-    },
-    startTx(_id) {
-      self.useTx(_id).txStart()
-    },
-    call: flow(function* call(_id, _method, _args) {
-      if (self.loaded && self.contracts.has(_id)) {
-        try {
-          return yield self.getMethod(_id, _method)["func"](..._args).call()
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        return undefined
-      }
-    }),
-    exec: flow(function* exec(_id, _method, _args, _params) {
-      if (self.loaded && self.contracts.has(_id)) {
-        try {
-          yield self.getMethod(_id, _method)["func"](..._args)
-            .send(_params)
-            .on('transactionHash', function (hash) {
-              self.createTx(hash)
-              self.startTx(hash)
-            })
-        } catch (error) {
-          console.error(error)
-        }
-      } else {
-        console.error("Not ready")
-      }
-    }),
-    listen(_id, _event, _options, _cb) {
-      if (self.loaded && self.contracts.has(_id)) {
-        self.use(_id).events[_event](..._options, _cb)
-      } else {
-        console.error("Not ready")
-      }
     },
     determineNetwork: flow(function* determineNetwork() {
       try {
@@ -145,6 +99,129 @@ export const AugescoStore = types
         self.updateStatus(web3Context.WEB3_NET_ERR);
       }
     }),
+    determineAccount: flow(function* determineAccount() {
+      try {
+        return yield self.web3.eth.getAccounts();
+      } catch (error) {
+        self.updateStatus(web3Context.WEB3_LOAD_ERR);
+      }
+    }),
+    determineBalance: flow(function* determineBalance() {
+      try {
+        const balance = yield self.web3.eth.getBalance(self.account)
+        self.balance = balance
+      } catch (error) {
+        console.error(error)
+      }
+    }),
+    updateAccountStatus: flow(function* updateAccountStatus(providers) {
+      try {
+        if (getWeb3Context(self.status)) {
+          const newAccount = yield self.determineAccount();
+          if (newAccount.length === 0) {
+            self.updateStatus(web3Context.WEB3_LOCKED);
+            throw new Error("No account found");
+          }
+
+          if (newAccount[0] === self.account && self.status !== web3Context.WEB3_LOCKED) {
+            return true;
+          }
+
+          const newNetwork = yield self.determineNetwork();
+          if (newNetwork === undefined) {
+            self.updateStatus(web3Context.WEB3_NET_ERR);
+            throw new Error("No network found");
+          }
+          self.updateNetwork(newNetwork);
+
+          const provider = providers[self.netName];
+          if (provider === undefined) {
+            self.updateStatus(web3Context.WEB3_LOADING);
+            throw new Error("No provider given");
+          }
+
+          self.updateAccount(newAccount[0]);
+          const newWeb3WsProvider = new Web3(
+            new Web3.providers.WebsocketProvider(provider)
+          );
+          self.setWeb3Websocket(newWeb3WsProvider);
+          self.updateStatus(web3Context.WEB3_LOADED);
+          self.updateBalance()
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }),
+    use(_id) {
+      if (self.loaded && self.contracts.has(_id)) {
+        return self.contracts.get(_id);
+      } else {
+        return {};
+      }
+    },
+    getMethod(_id, _method) {
+      if (self.loaded && self.contracts.has(_id)) {
+        return self.use(_id).getMethod(_method);
+      } else {
+        return {};
+      }
+    },
+    createTx(_id) {
+      self.transactions.set(_id, {
+        hash: _id,
+        receipt: {},
+        status: txStatus.PENDING
+      });
+    },
+    useTx(_id) {
+      if (self.loaded && self.transactions.has(_id)) {
+        return self.transactions.get(_id);
+      } else {
+        return {};
+      }
+    },
+    startTx(_id) {
+      self.useTx(_id).txStart();
+    },
+    call: flow(function* call(_id, _method, _args) {
+      if (self.loaded && self.contracts.has(_id)) {
+        try {
+          return yield self
+            .getMethod(_id, _method)
+            ["func"](..._args)
+            .call();
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        return undefined;
+      }
+    }),
+    exec: flow(function* exec(_id, _method, _args, _params) {
+      if (self.loaded && self.contracts.has(_id)) {
+        try {
+          yield self
+            .getMethod(_id, _method)
+            ["func"](..._args)
+            .send(_params)
+            .on("transactionHash", function(hash) {
+              self.createTx(hash);
+              self.startTx(hash);
+            });
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        console.error("Not ready");
+      }
+    }),
+    listen(_id, _event, _options, _cb) {
+      if (self.loaded && self.contracts.has(_id)) {
+        self.use(_id).events[_event](..._options, _cb);
+      } else {
+        console.error("Not ready");
+      }
+    },
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {
         ptx = self.web3_ws.eth.subscribe(
@@ -199,12 +276,12 @@ export const AugescoStore = types
       return getWeb3Network(self.network);
     },
     get keys() {
-      return Array.from(self.contracts.keys())
+      return Array.from(self.contracts.keys());
     },
     get values() {
-      return Array.from(self.contracts.values())
+      return Array.from(self.contracts.values());
     },
     get json() {
-      return self.contracts.toJSON()
+      return self.contracts.toJSON();
     }
   }));
