@@ -17,10 +17,11 @@ const web3Contexts = [
 let ptx = null;
 let nbh = null;
 
-const checkError = context => {
+const getWeb3Context = context => {
   if (
     context === web3Context.WEB3_CONTRACT_ERR ||
-    context === web3Context.WEB3_NET_ERR
+    context === web3Context.WEB3_NET_ERR ||
+    context === web3Context.WEB3_LOADING
   ) {
     return true;
   } else {
@@ -99,9 +100,25 @@ export const AugescoStore = types
         self.updateStatus(web3Context.WEB3_NET_ERR);
       }
     }),
-    updateAccountStatus() {
-
-    },
+    determineAccount: flow(function* determineAccount() {
+      try {
+        return yield self.web3.eth.getAccounts()
+      } catch (error) {
+        self.updateStatus(web3Context.WEB3_LOAD_ERR)
+      }
+    }),
+    updateAccountStatus: flow(function* updateAccountStatus() {
+      try {
+        if(getWeb3Context(self.status)) {
+          const newAccount = yield self.determineAccount()
+          console.log(newAccount)
+          if(self.status !== web3Context.WEB3_LOAD_ERR) {
+          }
+        }
+      } catch (error) {
+        console.err(error)
+      }
+    }),
     use(_id) {
       if (self.loaded && self.contracts.has(_id)) {
         return self.contracts.get(_id);
@@ -137,8 +154,7 @@ export const AugescoStore = types
       if (self.loaded && self.contracts.has(_id)) {
         try {
           return yield self
-            .getMethod(_id, _method)
-            ["func"](..._args)
+            .getMethod(_id, _method)["func"](..._args)
             .call();
         } catch (error) {
           console.error(error);
@@ -151,8 +167,7 @@ export const AugescoStore = types
       if (self.loaded && self.contracts.has(_id)) {
         try {
           yield self
-            .getMethod(_id, _method)
-            ["func"](..._args)
+            .getMethod(_id, _method)["func"](..._args)
             .send(_params)
             .on("transactionHash", function(hash) {
               self.createTx(hash);

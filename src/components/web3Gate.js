@@ -90,8 +90,11 @@ class Web3Gate extends Component {
   instantiateWeb3() {
     const { augesco } = this.props;
     this.fetchAccounts();
+    augesco.updateAccountStatus()
 
     augesco.web3.currentProvider.publicConfigStore.on("update", () => {
+      augesco.updateAccountStatus()
+
       this.fetchAccounts();
     });
 
