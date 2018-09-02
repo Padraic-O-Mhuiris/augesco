@@ -29,7 +29,7 @@ class Web3Gate extends Component {
     const { augesco } = this.props;
 
     if (
-      augesco.status !== web3Context.WEB3_CONTRACT_ERR &&
+      augesco.status !== web3Context.WEB3_CONTRACT_ERR ||
       augesco.status !== web3Context.WEB3_NET_ERR
     ) {
       augesco.web3.eth.getAccounts((err, accounts) => {
@@ -105,7 +105,6 @@ class Web3Gate extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props);
     const online = navigator.onLine;
     if (online) {
       getWeb3

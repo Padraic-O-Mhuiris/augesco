@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import Web3Gate from "./components/web3Gate"
-import { inject, observer } from "mobx-react"
 import "./assets/less/index"
 
 import AppContent from "./components/appComponents/appContent"
