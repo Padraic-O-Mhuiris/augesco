@@ -107,16 +107,31 @@ export const AugescoStore = types
         self.updateStatus(web3Context.WEB3_LOAD_ERR)
       }
     }),
-    updateAccountStatus: flow(function* updateAccountStatus() {
+    updateAccountStatus: flow(function* updateAccountStatus(providers) {
       try {
         if(getWeb3Context(self.status)) {
+
           const newAccount = yield self.determineAccount()
-          console.log(newAccount)
-          if(self.status !== web3Context.WEB3_LOAD_ERR) {
+          if(newAccount.length === 0) {
+            self.updateStatus(web3Context.WEB3_LOCKED)
+            throw new Error('No account found')
+          } 
+            
+          const newNetwork = yield self.determineNetwork()
+          if(newNetwork === undefined) {
+            self.updateStatus(web3Context.WEB3_NET_ERR)
+            throw new Error('No network found')
+          }
+          self.updateNetwork(newNetwork)
+
+          const provider = providers[self.netName]
+          if(provider === undefined) {
+            self.updateStatus(web3Context.WEB3_LOADING)
+            throw new Error('No provider given')
           }
         }
       } catch (error) {
-        console.err(error)
+        console.error(error)
       }
     }),
     use(_id) {
