@@ -1,6 +1,7 @@
 import { types, flow } from "mobx-state-tree";
 import { BigNumber } from "bignumber.js";
 import getWeb3Network from "../utils/getWeb3Network";
+import Web3 from "web3";
 import { contractInstance } from "./instanceContract";
 import { transactionInstance } from "./instanceTx";
 import { txStatus, web3Context } from "../constants";
@@ -102,36 +103,46 @@ export const AugescoStore = types
     }),
     determineAccount: flow(function* determineAccount() {
       try {
-        return yield self.web3.eth.getAccounts()
+        return yield self.web3.eth.getAccounts();
       } catch (error) {
-        self.updateStatus(web3Context.WEB3_LOAD_ERR)
+        self.updateStatus(web3Context.WEB3_LOAD_ERR);
       }
     }),
     updateAccountStatus: flow(function* updateAccountStatus(providers) {
       try {
-        if(getWeb3Context(self.status)) {
-
-          const newAccount = yield self.determineAccount()
-          if(newAccount.length === 0) {
-            self.updateStatus(web3Context.WEB3_LOCKED)
-            throw new Error('No account found')
-          } 
-            
-          const newNetwork = yield self.determineNetwork()
-          if(newNetwork === undefined) {
-            self.updateStatus(web3Context.WEB3_NET_ERR)
-            throw new Error('No network found')
+        if (getWeb3Context(self.status)) {
+          const newAccount = yield self.determineAccount();
+          if (newAccount.length === 0) {
+            self.updateStatus(web3Context.WEB3_LOCKED);
+            throw new Error("No account found");
           }
-          self.updateNetwork(newNetwork)
 
-          const provider = providers[self.netName]
-          if(provider === undefined) {
-            self.updateStatus(web3Context.WEB3_LOADING)
-            throw new Error('No provider given')
+          if (newAccount[0] === self.account) {
+            return true;
           }
+
+          const newNetwork = yield self.determineNetwork();
+          if (newNetwork === undefined) {
+            self.updateStatus(web3Context.WEB3_NET_ERR);
+            throw new Error("No network found");
+          }
+          self.updateNetwork(newNetwork);
+
+          const provider = providers[self.netName];
+          if (provider === undefined) {
+            self.updateStatus(web3Context.WEB3_LOADING);
+            throw new Error("No provider given");
+          }
+
+          self.setAccount(newAccount[0]);
+          const newWeb3WsProvider = new Web3(
+            new Web3.providers.WebsocketProvider(provider)
+          );
+          self.setWeb3Websocket(newWeb3WsProvider);
+          self.updateStatus(web3Context.WEB3_LOADED);
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }),
     use(_id) {
@@ -169,7 +180,8 @@ export const AugescoStore = types
       if (self.loaded && self.contracts.has(_id)) {
         try {
           return yield self
-            .getMethod(_id, _method)["func"](..._args)
+            .getMethod(_id, _method)
+            ["func"](..._args)
             .call();
         } catch (error) {
           console.error(error);
@@ -182,7 +194,8 @@ export const AugescoStore = types
       if (self.loaded && self.contracts.has(_id)) {
         try {
           yield self
-            .getMethod(_id, _method)["func"](..._args)
+            .getMethod(_id, _method)
+            ["func"](..._args)
             .send(_params)
             .on("transactionHash", function(hash) {
               self.createTx(hash);
