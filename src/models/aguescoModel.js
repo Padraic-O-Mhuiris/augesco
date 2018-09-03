@@ -2,6 +2,7 @@ import { types, flow } from "mobx-state-tree";
 import { BigNumber } from "bignumber.js";
 import getWeb3Network from "../utils/getWeb3Network";
 import Web3 from "web3";
+import ipfsAPI from "ipfs-api";
 import { contractInstance } from "./instanceContract";
 import { transactionInstance } from "./instanceTx";
 import { txStatus, web3Context } from "../constants";
@@ -21,7 +22,7 @@ let nbh = null;
 const getWeb3Context = context => {
   if (
     context !== web3Context.WEB3_CONTRACT_ERR &&
-    context !== web3Context.WEB3_NET_ERR 
+    context !== web3Context.WEB3_NET_ERR
   ) {
     return true;
   } else {
@@ -37,6 +38,7 @@ export const AugescoStore = types
     status: types.enumeration(web3Contexts),
     web3: types.optional(types.frozen()),
     web3_ws: types.optional(types.frozen()),
+    ipfs: types.optional(types.frozen()),
     witness: types.optional(types.frozen(), {}),
     contracts: types.map(contractInstance),
     transactions: types.map(transactionInstance),
@@ -77,6 +79,9 @@ export const AugescoStore = types
     setWeb3Websocket(web3_ws) {
       self.web3_ws = web3_ws;
     },
+    setIPFS(ipfs) {
+      self.ipfs = ipfs;
+    },
     setWitness(emitter) {
       self.witness = emitter;
     },
@@ -87,7 +92,7 @@ export const AugescoStore = types
       self.account = account;
     },
     updateBalance() {
-      self.determineBalance()
+      self.determineBalance();
     },
     updateNetwork(network) {
       self.network = network;
@@ -108,13 +113,16 @@ export const AugescoStore = types
     }),
     determineBalance: flow(function* determineBalance() {
       try {
-        const balance = yield self.web3.eth.getBalance(self.account)
-        self.balance = balance
+        const balance = yield self.web3.eth.getBalance(self.account);
+        self.balance = balance;
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }),
-    updateAccountStatus: flow(function* updateAccountStatus(providers) {
+    updateAccountStatus: flow(function* updateAccountStatus(
+      event_providers,
+      ipfs_provider
+    ) {
       try {
         if (getWeb3Context(self.status)) {
           const newAccount = yield self.determineAccount();
@@ -123,8 +131,17 @@ export const AugescoStore = types
             throw new Error("No account found");
           }
 
-          if (newAccount[0] === self.account && self.status !== web3Context.WEB3_LOCKED) {
+          if (
+            newAccount[0] === self.account &&
+            self.status !== web3Context.WEB3_LOCKED
+          ) {
             return true;
+          }
+
+          if (self.ipfs === undefined) {
+            self.setIPFS(
+              ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
+            );
           }
 
           const newNetwork = yield self.determineNetwork();
@@ -134,7 +151,7 @@ export const AugescoStore = types
           }
           self.updateNetwork(newNetwork);
 
-          const provider = providers[self.netName];
+          const provider = event_providers[self.netName];
           if (provider === undefined) {
             self.updateStatus(web3Context.WEB3_LOADING);
             throw new Error("No provider given");
@@ -146,7 +163,7 @@ export const AugescoStore = types
           );
           self.setWeb3Websocket(newWeb3WsProvider);
           self.updateStatus(web3Context.WEB3_LOADED);
-          self.updateBalance()
+          self.updateBalance();
         }
       } catch (error) {
         console.error(error);
