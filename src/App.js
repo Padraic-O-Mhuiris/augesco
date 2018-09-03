@@ -17,9 +17,9 @@ class App extends Component {
           local: "ws://127.0.0.1:8545"
         }}
         ipfs_provider={{
-          host: "localhost",
+          host: "ipfs.infura.io",
           port: "5001",
-          protocol: "http"
+          protocol: "https"
         }}
       >
         <AppContent />

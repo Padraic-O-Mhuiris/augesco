@@ -24,7 +24,8 @@ class AppContent extends Component {
     super(props);
 
     this.state = {
-      newNumber: 1
+      newNumber: 1,
+      cat: ""
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -80,7 +81,7 @@ class AppContent extends Component {
   componentDidMount() {
     const { augesco } = this.props;
     const validCID = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
-
+    
     augesco.ipfs.ls(validCID, function (err, files) {
       files.forEach((file) => {
         console.log(file.path)
@@ -264,6 +265,12 @@ class AppContent extends Component {
                   </p>
                 </Card>
               </Col>
+            </Row>
+
+            <br />
+            <br />
+            <Row>
+
             </Row>
 
             <br />

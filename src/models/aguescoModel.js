@@ -2,10 +2,10 @@ import { types, flow } from "mobx-state-tree";
 import { BigNumber } from "bignumber.js";
 import getWeb3Network from "../utils/getWeb3Network";
 import Web3 from "web3";
-import ipfsAPI from "ipfs-api";
 import { contractInstance } from "./instanceContract";
 import { transactionInstance } from "./instanceTx";
 import { txStatus, web3Context } from "../constants";
+const IPFS = require("ipfs-api");
 
 const web3Contexts = [
   web3Context.WEB3_LOAD_ERR,
@@ -140,7 +140,9 @@ export const AugescoStore = types
 
           if (self.ipfs === undefined) {
             self.setIPFS(
-              ipfsAPI({ host: "localhost", port: "5001", protocol: "http" })
+              new IPFS(ipfs_provider.host, ipfs_provider.port, {
+                protocol: ipfs_provider.protocol
+              })
             );
           }
 
