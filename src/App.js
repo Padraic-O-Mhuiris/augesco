@@ -5,12 +5,13 @@ import "./assets/less/index";
 import AppContent from "./components/appComponents/appContent";
 
 const contractCounter = require("../build/contracts/Counter.json");
+const contractIpfs = require("../build/contracts/Ipfs.json");
 
 class App extends Component {
   render() {
     return (
       <Web3Gate
-        contracts={[contractCounter]}
+        contracts={[contractCounter, contractIpfs]}
         event_providers={{
           main: "wss://mainnet.infura.io/ws",
           rinkeby: "wss://rinkeby.infura.io/ws",
