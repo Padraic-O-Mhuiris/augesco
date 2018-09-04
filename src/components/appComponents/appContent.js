@@ -12,8 +12,8 @@ import {
   Icon,
   InputNumber
 } from "antd";
-
 import Count from "./count";
+import Ipfs from "./ipfs"
 
 const { Header, Content, Footer } = Layout;
 
@@ -76,16 +76,6 @@ class AppContent extends Component {
     augesco.exec("Counter", "changeCount", [this.state.newNumber], {
       from: augesco.account
     });
-  }
-
-  componentDidMount() {
-    const { augesco } = this.props;
-    const validCID = 'QmQ2r6iMNpky5f1m4cnm3Yqw8VSvjuKpTcK1X7dBR1LkJF'
-    augesco.ipfs.ls(validCID, function (err, files) {
-      files.forEach((file) => {
-        console.log(file.path)
-      })
-    })
   }
 
   render() {
@@ -268,10 +258,8 @@ class AppContent extends Component {
 
             <br />
             <br />
-            <Row>
-
-            </Row>
-
+            
+            <Ipfs/>
             <br />
             <br />
           </div>
