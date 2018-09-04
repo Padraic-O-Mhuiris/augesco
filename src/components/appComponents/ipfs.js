@@ -8,9 +8,28 @@ class Ipfs extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      file: []
+      file: "",
+      imagePreviewUrl: ""
+    };
+    this.handleImageChange = this.handleImageChange.bind(this);
+  }
+
+  handleImageChange(e) {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      this.setState({
+        file: file,
+        imagePreviewUrl: reader.result
+      });
+      console.log(this.state);
     };
   }
+
   async uploadToIpfs(file, fileList) {
     console.log(file, fileList);
   }
@@ -25,6 +44,7 @@ class Ipfs extends Component {
         <Row>
           <Col span={6} style={{ textAlign: "center" }}>
             <Input
+              onChange={e => this.handleImageChange(e)}
               id="fileupload"
               accept="image/*"
               type="file"
@@ -41,6 +61,31 @@ class Ipfs extends Component {
             >
               Choose File
             </Button>
+            &nbsp;&nbsp;
+            {this.state.file.name}
+            <br />
+            <br />
+            {this.state.imagePreviewUrl && (
+              <div>
+                <img
+                  alt="preview"
+                  src={this.state.imagePreviewUrl}
+                  style={{ height: "200px", width: "200px" }}
+                />
+                <br />
+                <br />
+                <Button
+                  onClick={() => {
+                    this.uploadToIpfs();
+                  }}
+                  type="primary"
+                  icon="upload"
+                  size="large"
+                >
+                  Upload To Ipfs
+                </Button>
+              </div>
+            )}
           </Col>
           <Col span={18} />
         </Row>
