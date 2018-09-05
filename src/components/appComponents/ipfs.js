@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Row, Col, Input, Icon, Button } from "antd";
 import { inject, observer } from "mobx-react";
+const Buffer = require('buffer/').Buffer
 
 @inject("augesco")
 @observer
@@ -9,7 +10,9 @@ class Ipfs extends Component {
     super(props);
     this.state = {
       file: "",
-      imagePreviewUrl: ""
+      imagePreviewUrl: "",
+      buffer: {},
+      ipfsUrl: ""
     };
     this.handleImageChange = this.handleImageChange.bind(this);
   }
@@ -26,16 +29,30 @@ class Ipfs extends Component {
         file: file,
         imagePreviewUrl: reader.result
       });
-      console.log(this.state);
+
+      reader.readAsArrayBuffer(file);
+      reader.onloadend = () => {
+        this.setState({
+          buffer: Buffer.from(reader.result)
+        });
+      };
     };
   }
 
-  async uploadToIpfs(file, fileList) {
-    console.log(file, fileList);
+  async uploadToIpfs() {
+    const { augesco } = this.props;
+
+    augesco.ipfs.add([this.state.buffer], function(err, res) {
+      console.log(err, res);
+    });
   }
 
   async componentDidMount() {
     const { augesco } = this.props;
+    const file = await augesco.ipfs.get(
+      "QmRWZbpMspDdRV9tBKtVd61BD6TR6Hcqh3M2AY71mXQdhs"
+    );
+    console.log(file);
   }
 
   render() {
