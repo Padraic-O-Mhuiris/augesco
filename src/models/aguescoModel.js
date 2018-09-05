@@ -41,6 +41,17 @@ const readFile = file => {
   })
 }
 
+const bufferToFileUrl = (buffer, mimetype) => {
+  return new Promise((resolve, reject) => {
+    var fr = new FileReader()
+    fr.onloadend = () => {
+      resolve(fr.result)
+    }
+    console.log(buffer[0].content)
+    fr.readAsDataURL(new Blob(buffer[0].content, mimetype))
+  })
+}
+
 export const AugescoStore = types
   .model({
     account: types.optional(types.string, ""),
@@ -255,6 +266,10 @@ export const AugescoStore = types
     upload: flow(function* upload(file) {
       const res = Buffer.from(yield readFile(file));
       return self.ipfs.add(res)
+    }),
+    download: flow(function* download(hash, mimetype) {
+      const fileBuffer = yield self.ipfs.get(hash)
+      return yield bufferToFileUrl(fileBuffer, mimetype)
     }),
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {

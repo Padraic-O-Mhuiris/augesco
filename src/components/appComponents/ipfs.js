@@ -20,14 +20,15 @@ class Ipfs extends Component {
     let reader = new FileReader();
     let file = e.target.files[0];
 
-    reader.readAsDataURL(file);
-
     reader.onloadend = () => {
       this.setState({
         file: file,
         imagePreviewUrl: reader.result
       });
+      console.log(reader.result)
     };
+    reader.readAsDataURL(file);
+
   }
 
   async uploadToIpfs() {
@@ -45,10 +46,11 @@ class Ipfs extends Component {
 
   async componentDidMount() {
     const { augesco } = this.props;
-    const file = await augesco.ipfs.get(
-      await augesco.call("Ipfs", "getHash", [])
-    );
-    console.log(file);
+    const hash = await augesco.call("Ipfs", "getHash", [])
+    const data = await augesco.download(hash, {type: 'image/jpeg'})
+    console.log(hash);
+    console.log(data)
+
   }
 
   render() {
