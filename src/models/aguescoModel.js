@@ -6,6 +6,7 @@ import { contractInstance } from "./instanceContract";
 import { transactionInstance } from "./instanceTx";
 import { txStatus, web3Context } from "../constants";
 const IPFS = require("ipfs-api");
+const Buffer = require("buffer/").Buffer;
 
 const web3Contexts = [
   web3Context.WEB3_LOAD_ERR,
@@ -29,6 +30,16 @@ const getWeb3Context = context => {
     return false;
   }
 };
+
+const readFile = file => {
+  return new Promise((resolve, reject) => {
+    var fr = new FileReader();  
+    fr.onloadend = () => {
+      resolve(fr.result)
+    };
+    fr.readAsArrayBuffer(file);
+  })
+}
 
 export const AugescoStore = types
   .model({
@@ -241,6 +252,10 @@ export const AugescoStore = types
         console.error("Not ready");
       }
     },
+    upload: flow(function* upload(file) {
+      const res = Buffer.from(yield readFile(file));
+      return self.ipfs.add(res)
+    }),
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {
         ptx = self.web3_ws.eth.subscribe(

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Row, Col, Input, Icon, Button } from "antd";
 import { inject, observer } from "mobx-react";
-const Buffer = require('buffer/').Buffer
 
 @inject("augesco")
 @observer
@@ -11,7 +10,6 @@ class Ipfs extends Component {
     this.state = {
       file: "",
       imagePreviewUrl: "",
-      buffer: {},
       ipfsUrl: ""
     };
     this.handleImageChange = this.handleImageChange.bind(this);
@@ -19,9 +17,9 @@ class Ipfs extends Component {
 
   handleImageChange(e) {
     e.preventDefault();
-
     let reader = new FileReader();
     let file = e.target.files[0];
+
     reader.readAsDataURL(file);
 
     reader.onloadend = () => {
@@ -29,28 +27,26 @@ class Ipfs extends Component {
         file: file,
         imagePreviewUrl: reader.result
       });
-
-      reader.readAsArrayBuffer(file);
-      reader.onloadend = () => {
-        this.setState({
-          buffer: Buffer.from(reader.result)
-        });
-      };
     };
   }
 
   async uploadToIpfs() {
     const { augesco } = this.props;
 
-    augesco.ipfs.add([this.state.buffer], function(err, res) {
-      console.log(err, res);
-    });
+    try {
+      const uploadReceipt = await augesco.upload(this.state.file);
+      augesco.exec("Ipfs", "setHash", [uploadReceipt[0].hash], {
+        from: augesco.account
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async componentDidMount() {
     const { augesco } = this.props;
     const file = await augesco.ipfs.get(
-      "QmRWZbpMspDdRV9tBKtVd61BD6TR6Hcqh3M2AY71mXQdhs"
+      await augesco.call("Ipfs", "getHash", [])
     );
     console.log(file);
   }
