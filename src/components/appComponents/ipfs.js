@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, Input, Icon, Button } from "antd";
+import { Row, Col, notification, Input, Icon, Button } from "antd";
 import { inject, observer } from "mobx-react";
 
 @inject("augesco")
@@ -10,7 +10,9 @@ class Ipfs extends Component {
     this.state = {
       file: "",
       imagePreviewUrl: "",
-      ipfsUrl: ""
+      ipfsUrl: "",
+      ipfsFilename: "",
+      ipfsMime: ""
     };
     this.handleImageChange = this.handleImageChange.bind(this);
   }
@@ -25,10 +27,8 @@ class Ipfs extends Component {
         file: file,
         imagePreviewUrl: reader.result
       });
-      console.log(reader.result)
     };
     reader.readAsDataURL(file);
-
   }
 
   async uploadToIpfs() {
@@ -44,13 +44,36 @@ class Ipfs extends Component {
     }
   }
 
+  async downloadFromIpfs() {
+    const { augesco } = this.props;
+
+    const hash = await augesco.call("Ipfs", "getHash", []);
+    const data = await augesco.download(hash);
+    console.log(data);
+    this.setState({
+      ipfsUrl: data.data,
+      ipfsFilename: data.name,
+      ipfsMime: data.mime
+    });
+  }
+
   async componentDidMount() {
     const { augesco } = this.props;
-    const hash = await augesco.call("Ipfs", "getHash", [])
-    const data = await augesco.download(hash, {type: 'image/jpeg'})
-    console.log(hash);
-    console.log(data)
 
+    this.downloadFromIpfs();
+
+    augesco.listen("Ipfs", "NewHash", {}, (err, event) => {
+      this.downloadFromIpfs();
+
+      notification.open({
+        key: "event-increment",
+        message: event.event,
+        description: "Contract event fired : New IPFS file",
+        duration: 5,
+        placement: "bottomLeft",
+        icon: <Icon type="file" style={{ color: "green" }} />
+      });
+    });
   }
 
   render() {
@@ -61,7 +84,6 @@ class Ipfs extends Component {
             <Input
               onChange={e => this.handleImageChange(e)}
               id="fileupload"
-              accept="image/*"
               type="file"
               size="large"
               style={{ display: "none" }}
@@ -102,7 +124,14 @@ class Ipfs extends Component {
               </div>
             )}
           </Col>
-          <Col span={18} />
+          <Col span={18}>
+            {this.state.ipfsUrl && (
+              <div>
+                <h3>{this.state.ipfsFilename}</h3>
+                <img alt="ipfs" src={this.state.ipfsUrl} />
+              </div>
+            )}
+          </Col>
         </Row>
         <br />
         <br />

@@ -4,7 +4,7 @@ import getWeb3Network from "../utils/getWeb3Network";
 import Web3 from "web3";
 import { contractInstance } from "./instanceContract";
 import { transactionInstance } from "./instanceTx";
-import { txStatus, web3Context } from "../constants";
+import { txStatus, web3Context, IPFS_BUFFER_OFFSET } from "../constants";
 const IPFS = require("ipfs-api");
 const Buffer = require("buffer/").Buffer;
 
@@ -33,24 +33,62 @@ const getWeb3Context = context => {
 
 const readFile = file => {
   return new Promise((resolve, reject) => {
-    var fr = new FileReader();  
+    var fr = new FileReader();
     fr.onloadend = () => {
-      resolve(fr.result)
+      resolve({ data: fr.result, mime: file.type, name: file.name });
     };
     fr.readAsArrayBuffer(file);
-  })
-}
+  });
+};
 
-const bufferToFileUrl = (buffer, mimetype) => {
+const bufferToText = buffer => {
   return new Promise((resolve, reject) => {
-    var fr = new FileReader()
+    var fr = new FileReader();
     fr.onloadend = () => {
-      resolve(fr.result)
+      resolve(fr.result.split("-")[0]);
+    };
+    fr.readAsText(new Blob([buffer]));
+  });
+};
+
+const bufferToFileUrl = buffer => {
+  return new Promise(async (resolve, reject) => {
+    var fr = new FileReader();
+    fr.onloadend = async () => {
+      const name = await bufferToText(buffer[0].content.subarray(
+        IPFS_BUFFER_OFFSET,
+        IPFS_BUFFER_OFFSET * 2
+      ));
+
+      const mime = await bufferToText(
+        buffer[0].content.subarray(0, IPFS_BUFFER_OFFSET)
+      );
+      resolve({data: fr.result, name: name, mime:mime});
+    };
+    const mime = await bufferToText(
+      buffer[0].content.subarray(0, IPFS_BUFFER_OFFSET)
+    );
+    const data = buffer[0].content.subarray(
+      IPFS_BUFFER_OFFSET * 2,
+      buffer[0].content.length
+    );
+
+    fr.readAsDataURL(new Blob([data], {type: mime}));
+  });
+};
+
+const createBufferedData = (offset, content) => {
+  try {
+    const data = Buffer.from(content);
+    if (data.length > offset) {
+      throw new Error("file name too large");
     }
-    console.log(buffer[0].content)
-    fr.readAsDataURL(new Blob(buffer[0].content, mimetype))
-  })
-}
+    const buffer = Buffer.alloc(offset - data.length);
+    return Buffer.concat([data, buffer]);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const AugescoStore = types
   .model({
@@ -264,12 +302,22 @@ export const AugescoStore = types
       }
     },
     upload: flow(function* upload(file) {
-      const res = Buffer.from(yield readFile(file));
-      return self.ipfs.add(res)
+      const f = yield readFile(file);
+      console.log(f);
+      const res = Buffer.from(f.data);
+      const name = createBufferedData(IPFS_BUFFER_OFFSET, f.name+"-");
+      const mime = createBufferedData(IPFS_BUFFER_OFFSET, f.mime+"-");
+
+      const uploadData = Buffer.concat([mime, name, res]);
+      return self.ipfs.add(uploadData, {
+        progress: s => {
+          console.log("chunk uploaded", s);
+        }
+      });
     }),
-    download: flow(function* download(hash, mimetype) {
-      const fileBuffer = yield self.ipfs.get(hash)
-      return yield bufferToFileUrl(fileBuffer, mimetype)
+    download: flow(function* download(hash) {
+      const fileBuffer = yield self.ipfs.get(hash);
+      return yield bufferToFileUrl(fileBuffer);
     }),
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {

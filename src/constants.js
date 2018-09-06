@@ -24,3 +24,5 @@ export const txStatus = {
   FAILED: "TX_FAILED",
   SUCCESS: "TX_SUCCESS"
 }
+
+export const IPFS_BUFFER_OFFSET = 40

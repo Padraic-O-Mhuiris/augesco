@@ -4,7 +4,7 @@ contract Ipfs {
   string ipfsHash;
 
   event NewHash(
-    string indexed newHash
+    string newHash
   );
 
   function setHash(string x) public {
