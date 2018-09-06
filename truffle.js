@@ -1,5 +1,5 @@
 const HDWalletProvider = require("truffle-hdwallet-provider");
-const config = require('./account-config')
+require('dotenv').config();
 
 module.exports = {
   migrations_directory: "./migrations",
@@ -12,7 +12,7 @@ module.exports = {
     },
     ropsten: {
       provider: function() {
-        return new HDWalletProvider(config.MNEMONIC, "https://ropsten.infura.io/" + config.INFURA_KEY)
+        return new HDWalletProvider(process.env.MNEMONIC, "https://ropsten.infura.io/" + process.env.INFURA_KEY)
       },
       network_id: 3,
       gas: 5786536,
@@ -21,7 +21,7 @@ module.exports = {
     },
     rinkeby: {
       provider: function() {
-        return new HDWalletProvider(config.MNEMONIC, "https://rinkeby.infura.io/" + config.INFURA_KEY)
+        return new HDWalletProvider(process.env.MNEMONIC, "https://rinkeby.infura.io/" + process.env.INFURA_KEY)
       },
       network_id: 4,
       gas: 4712356,
