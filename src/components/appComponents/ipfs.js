@@ -49,14 +49,18 @@ class Ipfs extends Component {
     const { augesco } = this.props;
 
     const hash = await augesco.call("Ipfs", "getHash", []);
-    const data = await augesco.download(hash);
-    console.log(data);
-    this.setState({
-      hash: hash,
-      ipfsUrl: data.data,
-      ipfsFilename: data.name,
-      ipfsMime: data.mime
-    });
+    console.log(hash);
+    if (hash) {
+      const data = await augesco.download(hash);
+
+      console.log(data);
+      this.setState({
+        hash: hash,
+        ipfsUrl: data.data,
+        ipfsFilename: data.name,
+        ipfsMime: data.mime
+      });
+    }
   }
 
   async componentDidMount() {
@@ -129,7 +133,9 @@ class Ipfs extends Component {
           <Col span={18}>
             {this.state.ipfsUrl && (
               <div>
-                <h3>{this.state.ipfsFilename} - {this.state.hash}</h3>
+                <h3>
+                  {this.state.ipfsFilename} - {this.state.hash}
+                </h3>
                 <img alt="ipfs" src={this.state.ipfsUrl} />
               </div>
             )}
