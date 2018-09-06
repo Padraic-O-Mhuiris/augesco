@@ -303,7 +303,6 @@ export const AugescoStore = types
     },
     upload: flow(function* upload(file) {
       const f = yield readFile(file);
-      console.log(f);
       const res = Buffer.from(f.data);
       const name = createBufferedData(IPFS_BUFFER_OFFSET, f.name+"-");
       const mime = createBufferedData(IPFS_BUFFER_OFFSET, f.mime+"-");

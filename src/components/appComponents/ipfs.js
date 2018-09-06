@@ -10,6 +10,7 @@ class Ipfs extends Component {
     this.state = {
       file: "",
       imagePreviewUrl: "",
+      hash: "",
       ipfsUrl: "",
       ipfsFilename: "",
       ipfsMime: ""
@@ -51,6 +52,7 @@ class Ipfs extends Component {
     const data = await augesco.download(hash);
     console.log(data);
     this.setState({
+      hash: hash,
       ipfsUrl: data.data,
       ipfsFilename: data.name,
       ipfsMime: data.mime
@@ -127,7 +129,7 @@ class Ipfs extends Component {
           <Col span={18}>
             {this.state.ipfsUrl && (
               <div>
-                <h3>{this.state.ipfsFilename}</h3>
+                <h3>{this.state.ipfsFilename} - {this.state.hash}</h3>
                 <img alt="ipfs" src={this.state.ipfsUrl} />
               </div>
             )}
