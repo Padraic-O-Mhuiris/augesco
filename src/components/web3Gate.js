@@ -20,11 +20,11 @@ class Web3Gate extends Component {
   }
 
   instantiateWeb3() {
-    const { augesco, event_providers } = this.props;
-    augesco.updateAccountStatus(event_providers)
+    const { augesco, event_providers, ipfs_provider } = this.props;
+    augesco.updateAccountStatus(event_providers, ipfs_provider);
 
     augesco.web3.currentProvider.publicConfigStore.on("update", () => {
-      augesco.updateAccountStatus(event_providers)
+      augesco.updateAccountStatus(event_providers, ipfs_provider);
     });
 
     window.addEventListener("offline", function(e) {

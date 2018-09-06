@@ -12,8 +12,8 @@ import {
   Icon,
   InputNumber
 } from "antd";
-
 import Count from "./count";
+import Ipfs from "./ipfs"
 
 const { Header, Content, Footer } = Layout;
 
@@ -24,7 +24,8 @@ class AppContent extends Component {
     super(props);
 
     this.state = {
-      newNumber: 1
+      newNumber: 1,
+      cat: ""
     };
     this.handleClick1 = this.handleClick1.bind(this);
     this.handleClick2 = this.handleClick2.bind(this);
@@ -255,6 +256,10 @@ class AppContent extends Component {
               </Col>
             </Row>
 
+            <br />
+            <br />
+            
+            <Ipfs/>
             <br />
             <br />
           </div>

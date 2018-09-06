@@ -4,7 +4,9 @@ import getWeb3Network from "../utils/getWeb3Network";
 import Web3 from "web3";
 import { contractInstance } from "./instanceContract";
 import { transactionInstance } from "./instanceTx";
-import { txStatus, web3Context } from "../constants";
+import { txStatus, web3Context, IPFS_BUFFER_OFFSET } from "../constants";
+const IPFS = require("ipfs-api");
+const Buffer = require("buffer/").Buffer;
 
 const web3Contexts = [
   web3Context.WEB3_LOAD_ERR,
@@ -21,11 +23,70 @@ let nbh = null;
 const getWeb3Context = context => {
   if (
     context !== web3Context.WEB3_CONTRACT_ERR &&
-    context !== web3Context.WEB3_NET_ERR 
+    context !== web3Context.WEB3_NET_ERR
   ) {
     return true;
   } else {
     return false;
+  }
+};
+
+const readFile = file => {
+  return new Promise((resolve, reject) => {
+    var fr = new FileReader();
+    fr.onloadend = () => {
+      resolve({ data: fr.result, mime: file.type, name: file.name });
+    };
+    fr.readAsArrayBuffer(file);
+  });
+};
+
+const bufferToText = buffer => {
+  return new Promise((resolve, reject) => {
+    var fr = new FileReader();
+    fr.onloadend = () => {
+      resolve(fr.result.split("-")[0]);
+    };
+    fr.readAsText(new Blob([buffer]));
+  });
+};
+
+const bufferToFileUrl = buffer => {
+  return new Promise(async (resolve, reject) => {
+    var fr = new FileReader();
+    fr.onloadend = async () => {
+      const name = await bufferToText(buffer[0].content.subarray(
+        IPFS_BUFFER_OFFSET,
+        IPFS_BUFFER_OFFSET * 2
+      ));
+
+      const mime = await bufferToText(
+        buffer[0].content.subarray(0, IPFS_BUFFER_OFFSET)
+      );
+      resolve({data: fr.result, name: name, mime:mime});
+    };
+    const mime = await bufferToText(
+      buffer[0].content.subarray(0, IPFS_BUFFER_OFFSET)
+    );
+    const data = buffer[0].content.subarray(
+      IPFS_BUFFER_OFFSET * 2,
+      buffer[0].content.length
+    );
+
+    fr.readAsDataURL(new Blob([data], {type: mime}));
+  });
+};
+
+const createBufferedData = (offset, content) => {
+  try {
+    const data = Buffer.from(content);
+    if (data.length > offset) {
+      throw new Error("file name too large");
+    }
+    const buffer = Buffer.alloc(offset - data.length);
+    return Buffer.concat([data, buffer]);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -37,6 +98,7 @@ export const AugescoStore = types
     status: types.enumeration(web3Contexts),
     web3: types.optional(types.frozen()),
     web3_ws: types.optional(types.frozen()),
+    ipfs: types.optional(types.frozen()),
     witness: types.optional(types.frozen(), {}),
     contracts: types.map(contractInstance),
     transactions: types.map(transactionInstance),
@@ -77,6 +139,9 @@ export const AugescoStore = types
     setWeb3Websocket(web3_ws) {
       self.web3_ws = web3_ws;
     },
+    setIPFS(ipfs) {
+      self.ipfs = ipfs;
+    },
     setWitness(emitter) {
       self.witness = emitter;
     },
@@ -87,7 +152,7 @@ export const AugescoStore = types
       self.account = account;
     },
     updateBalance() {
-      self.determineBalance()
+      self.determineBalance();
     },
     updateNetwork(network) {
       self.network = network;
@@ -108,13 +173,16 @@ export const AugescoStore = types
     }),
     determineBalance: flow(function* determineBalance() {
       try {
-        const balance = yield self.web3.eth.getBalance(self.account)
-        self.balance = balance
+        const balance = yield self.web3.eth.getBalance(self.account);
+        self.balance = balance;
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     }),
-    updateAccountStatus: flow(function* updateAccountStatus(providers) {
+    updateAccountStatus: flow(function* updateAccountStatus(
+      event_providers,
+      ipfs_provider
+    ) {
       try {
         if (getWeb3Context(self.status)) {
           const newAccount = yield self.determineAccount();
@@ -123,8 +191,19 @@ export const AugescoStore = types
             throw new Error("No account found");
           }
 
-          if (newAccount[0] === self.account && self.status !== web3Context.WEB3_LOCKED) {
+          if (
+            newAccount[0] === self.account &&
+            self.status !== web3Context.WEB3_LOCKED
+          ) {
             return true;
+          }
+
+          if (self.ipfs === undefined) {
+            self.setIPFS(
+              new IPFS(ipfs_provider.host, ipfs_provider.port, {
+                protocol: ipfs_provider.protocol
+              })
+            );
           }
 
           const newNetwork = yield self.determineNetwork();
@@ -134,7 +213,7 @@ export const AugescoStore = types
           }
           self.updateNetwork(newNetwork);
 
-          const provider = providers[self.netName];
+          const provider = event_providers[self.netName];
           if (provider === undefined) {
             self.updateStatus(web3Context.WEB3_LOADING);
             throw new Error("No provider given");
@@ -146,7 +225,7 @@ export const AugescoStore = types
           );
           self.setWeb3Websocket(newWeb3WsProvider);
           self.updateStatus(web3Context.WEB3_LOADED);
-          self.updateBalance()
+          self.updateBalance();
         }
       } catch (error) {
         console.error(error);
@@ -222,6 +301,23 @@ export const AugescoStore = types
         console.error("Not ready");
       }
     },
+    upload: flow(function* upload(file) {
+      const f = yield readFile(file);
+      const res = Buffer.from(f.data);
+      const name = createBufferedData(IPFS_BUFFER_OFFSET, f.name+"-");
+      const mime = createBufferedData(IPFS_BUFFER_OFFSET, f.mime+"-");
+
+      const uploadData = Buffer.concat([mime, name, res]);
+      return self.ipfs.add(uploadData, {
+        progress: s => {
+          console.log("chunk uploaded", s);
+        }
+      });
+    }),
+    download: flow(function* download(hash) {
+      const fileBuffer = yield self.ipfs.get(hash);
+      return yield bufferToFileUrl(fileBuffer);
+    }),
     startPendingTxs() {
       if (self.status === web3Context.WEB3_LOADED) {
         ptx = self.web3_ws.eth.subscribe(
