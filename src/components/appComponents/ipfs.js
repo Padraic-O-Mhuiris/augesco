@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, notification, Input, Icon, Button } from "antd";
+import { Row, Col, notification, Input, Icon, Button, Card, Modal } from "antd";
 import { inject, observer } from "mobx-react";
 
 @inject("augesco")
@@ -13,7 +13,8 @@ class Ipfs extends Component {
       hash: "",
       ipfsUrl: "",
       ipfsFilename: "",
-      ipfsMime: ""
+      ipfsMime: "",
+      modalStatus: false
     };
     this.handleImageChange = this.handleImageChange.bind(this);
   }
@@ -85,69 +86,76 @@ class Ipfs extends Component {
   render() {
     return (
       <div>
-        <Row>
-          <Col span={6} style={{ textAlign: "center" }}>
-            <Input
-              onChange={e => this.handleImageChange(e)}
-              id="fileupload"
-              type="file"
-              size="large"
-              style={{ display: "none" }}
-            />
-            <Button
-              onClick={() => {
-                document.getElementById("fileupload").click();
-              }}
-              type="primary"
-              icon="upload"
-              size="large"
-            >
-              Choose File
-            </Button>
-            &nbsp;&nbsp;
-            {this.state.file.name}
-            <br />
-            <br />
-            {this.state.imagePreviewUrl && (
-              <div>
-                <img
-                  alt="preview"
-                  src={this.state.imagePreviewUrl}
-                  style={{ height: "200px", width: "200px" }}
-                />
-                <br />
-                <br />
-                <Button
-                  onClick={() => {
-                    this.uploadToIpfs();
-                  }}
-                  type="primary"
-                  icon="upload"
-                  size="large"
-                >
-                  Upload To Ipfs
-                </Button>
-              </div>
-            )}
-          </Col>
-          <Col span={18}>
-            {this.state.ipfsUrl && (
-              <div>
-                <h3>
-                  {this.state.ipfsFilename} - {this.state.hash}
-                </h3>
-                <img alt="ipfs" src={this.state.ipfsUrl} />
-              </div>
-            )}
-          </Col>
-        </Row>
         <br />
         <br />
 
         <Row>
-          <Col span={8} />
-          <Col span={8} style={{ textAlign: "center" }} />
-          <Col span={8} />
+          <Col span={3} />
+          <Col span={18} style={{ textAlign: "center" }}>
+            <Card
+              title={this.state.ipfsFilename + " - " + this.state.hash}
+              bordered={true}
+              hoverable={true}
+              extra={
+                <div>
+                  <Input
+                    onChange={e => {
+                      this.handleImageChange(e);
+                      this.setState({
+                        modalStatus: true
+                      });
+                    }}
+                    id="fileupload"
+                    type="file"
+                    size="large"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                  <Button
+                    onClick={() => {
+                      document.getElementById("fileupload").click();
+                    }}
+                    type="primary"
+                    icon="upload"
+                    size="large"
+                  >
+                    Choose File
+                  </Button>
+                  <Modal
+                    title="Image Preview"
+                    visible={this.state.modalStatus}
+                    okText="Upload To Ipfs"
+                    centered={true}
+                    onCancel={() => this.setState({ modalStatus: false })}
+                    onOk={() => {
+                      this.uploadToIpfs();
+                      this.setState({ modalStatus: false });
+                    }}
+                  >
+                    <img
+                      alt="preview"
+                      src={this.state.imagePreviewUrl}
+                      style={{ height: "200px", width: "200px" }}
+                    />
+                  </Modal>
+                </div>
+              }
+            >
+              {this.state.ipfsUrl ? (
+                <img
+                  style={{ width: "380px", height: "200px" }}
+                  alt="ipfs"
+                  src={this.state.ipfsUrl}
+                />
+              ) : (
+                <img
+                  alt="ipfs"
+                  src="https://d1f5w6fv2lvk5u.cloudfront.net/tmc/wp-content/uploads/2017/03/22044226/380x200.png"
+                />
+              )}
+            </Card>
+          </Col>
+          <Col span={3} />
         </Row>
       </div>
     );
