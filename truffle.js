@@ -17,7 +17,6 @@ module.exports = {
       network_id: 3,
       gas: 5786536,
       skipDryRun: true
-
     },
     rinkeby: {
       provider: function() {
