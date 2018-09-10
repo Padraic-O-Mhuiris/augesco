@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Row, Col, notification, Input, Icon, Button, Card } from "antd";
+import { Row, Col, notification, Input, Icon, Button, Card, Modal } from "antd";
 import { inject, observer } from "mobx-react";
 
 @inject("augesco")
@@ -13,7 +13,8 @@ class Ipfs extends Component {
       hash: "",
       ipfsUrl: "",
       ipfsFilename: "",
-      ipfsMime: ""
+      ipfsMime: "",
+      modalStatus: false
     };
     this.handleImageChange = this.handleImageChange.bind(this);
   }
@@ -98,7 +99,12 @@ class Ipfs extends Component {
               extra={
                 <div>
                   <Input
-                    onChange={e => this.handleImageChange(e)}
+                    onChange={e => {
+                      this.handleImageChange(e);
+                      this.setState({
+                        modalStatus: true
+                      });
+                    }}
                     id="fileupload"
                     type="file"
                     size="large"
@@ -115,6 +121,23 @@ class Ipfs extends Component {
                   >
                     Choose File
                   </Button>
+                  <Modal
+                    title="Image Preview"
+                    visible={this.state.modalStatus}
+                    okText="Upload To Ipfs"
+                    centered={true}
+                    onCancel={() => this.setState({ modalStatus: false })}
+                    onOk={() => {
+                      this.uploadToIpfs();
+                      this.setState({ modalStatus: false });
+                    }}
+                  >
+                    <img
+                      alt="preview"
+                      src={this.state.imagePreviewUrl}
+                      style={{ height: "200px", width: "200px" }}
+                    />
+                  </Modal>
                 </div>
               }
             >
