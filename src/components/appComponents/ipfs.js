@@ -141,7 +141,18 @@ class Ipfs extends Component {
                 </div>
               }
             >
-              <img alt="ipfs" src={this.state.ipfsUrl} />
+              {this.state.ipfsUrl ? (
+                <img
+                  style={{ width: "380px", height: "200px" }}
+                  alt="ipfs"
+                  src={this.state.ipfsUrl}
+                />
+              ) : (
+                <img
+                  alt="ipfs"
+                  src="https://d1f5w6fv2lvk5u.cloudfront.net/tmc/wp-content/uploads/2017/03/22044226/380x200.png"
+                />
+              )}
             </Card>
           </Col>
           <Col span={3} />
