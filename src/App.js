@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import Web3Gate from './components/web3Gate';
+import Web3Gate from './components/web3Components/web3Gate';
 import './assets/less/index';
 import { withRouter, Route } from 'react-router';
-
-import { inject, observer } from 'mobx-react';
-import AppContent from './components/appComponents/appContent';
+import Landing from './components/appComponents/landing';
 
 const contractCounter = require('../build/contracts/Counter.json');
 const contractIpfs = require('../build/contracts/Ipfs.json');
@@ -13,7 +11,7 @@ const routes = [
   {
     path: '/',
     exact: true,
-    main: () => <AppContent />
+    main: () => <Landing />
   },
   {
     path: '/bubblegum',
@@ -25,10 +23,8 @@ const routes = [
   }
 ];
 
-@inject('router')
 class App extends Component {
   render() {
-    console.log(this.props);
     return (
       <Web3Gate
         contracts={[contractCounter, contractIpfs]}
