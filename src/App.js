@@ -5,6 +5,7 @@ import { withRouter, Route } from 'react-router';
 
 import Landing from './components/appComponents/landing';
 import Docs from './components/appComponents/docs'
+import Reporter from './components/appComponents/reporter'
 
 const contractCounter = require('../build/contracts/Counter.json');
 const contractIpfs = require('../build/contracts/Ipfs.json');
@@ -20,8 +21,8 @@ const routes = [
     main: () => <Docs/>
   },
   {
-    path: '/shoelaces',
-    main: () => <h2>Shoelaces</h2>
+    path: '/reporter',
+    main: () => <Reporter/>
   }
 ];
 
