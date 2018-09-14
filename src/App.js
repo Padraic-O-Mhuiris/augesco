@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import Web3Gate from './components/web3Components/web3Gate';
 import './assets/less/index';
 import { withRouter, Route } from 'react-router';
+
 import Landing from './components/appComponents/landing';
+import Docs from './components/appComponents/docs'
 
 const contractCounter = require('../build/contracts/Counter.json');
 const contractIpfs = require('../build/contracts/Ipfs.json');
@@ -14,8 +16,8 @@ const routes = [
     main: () => <Landing />
   },
   {
-    path: '/bubblegum',
-    main: () => <h2>Bubblegum</h2>
+    path: '/docs',
+    main: () => <Docs/>
   },
   {
     path: '/shoelaces',

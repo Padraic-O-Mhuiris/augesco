@@ -19,7 +19,7 @@ const { Header, Content, Footer } = Layout;
 
 @inject("augesco")
 @observer
-class landing extends Component {
+class Landing extends Component {
   constructor(props) {
     super(props);
 
@@ -292,4 +292,4 @@ class landing extends Component {
   }
 }
 
-export default landing;
+export default Landing;
