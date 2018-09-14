@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Web3Gate from './components/web3Components/web3Gate';
+import Web3Gate from './components/augesco/web3Components/web3Gate';
 import './assets/less/index';
 import { withRouter, Route } from 'react-router';
 

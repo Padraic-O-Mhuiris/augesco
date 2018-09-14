@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { web3Context } from "../../constants";
+import { web3Context } from "../../../constants";
 import ContractLoading from "./contractLoading";
 import EventGate from "../eventComponents/eventGate";
 
