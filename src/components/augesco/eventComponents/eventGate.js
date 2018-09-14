@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { txStatus } from "../../constants";
+import { txStatus } from "../../../constants";
 import { notification, Icon, Drawer } from "antd";
-import getWeb3Network from "../../utils/getWeb3Network";
+import getWeb3Network from "../../../utils/getWeb3Network";
 import ChainLog from "./chainLog";
 
 const etherscan = {

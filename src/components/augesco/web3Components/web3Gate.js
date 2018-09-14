@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import getWeb3 from "../utils/getWeb3";
+import getWeb3 from "../../../utils/getWeb3";
 import { inject, observer } from "mobx-react";
-import { web3Context } from "../constants";
-import Web3Loading from "./web3Components/web3Loading";
-import Web3Locked from "./web3Components/web3Locked";
-import Web3NotInstalled from "./web3Components/web3NotInstalled";
-import Web3NoNetwork from "./web3Components/web3NoNetwork";
-import Web3NoContract from "./web3Components/web3NoContract";
-import ContractGate from "./contractComponents/contractGate";
+import { web3Context } from "../../../constants";
+import Web3Loading from "./web3Loading";
+import Web3Locked from "./web3Locked";
+import Web3NotInstalled from "./web3NotInstalled";
+import Web3NoNetwork from "./web3NoNetwork";
+import Web3NoContract from "./web3NoContract";
+import ContractGate from "../contractComponents/contractGate";
 
 @inject("augesco")
 @observer
