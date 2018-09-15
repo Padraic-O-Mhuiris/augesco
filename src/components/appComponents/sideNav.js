@@ -4,7 +4,7 @@ import { Layout, Menu, Icon } from 'antd';
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 
-class Sider extends Component {
+class SideNav extends Component {
   render() {
     return (
       <Sider width={200} style={{ background: '#fff' }}>
@@ -62,4 +62,4 @@ class Sider extends Component {
   }
 }
 
-export default Sider;
+export default SideNav;

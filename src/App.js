@@ -8,6 +8,7 @@ import Landing from './components/appComponents/landing';
 import Docs from './components/appComponents/docs';
 import Reporter from './components/appComponents/reporter';
 
+import SideNav from './components/appComponents/sideNav';
 const { Header } = Layout;
 
 const contractCounter = require('../build/contracts/Counter.json');
@@ -21,7 +22,8 @@ const routes = [
   },
   {
     path: '/docs',
-    main: () => <Docs />
+    main: () => <Docs />,
+    sider: () => <SideNav />
   },
   {
     path: '/reporter',
@@ -60,6 +62,14 @@ class App extends Component {
             </Menu>
           </Header>
           <Layout>
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                exact={route.exact}
+                component={route.sider}
+              />
+            ))}
             {routes.map((route, index) => (
               <Route
                 key={index}
