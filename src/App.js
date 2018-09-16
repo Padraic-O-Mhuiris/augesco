@@ -8,6 +8,7 @@ import Landing from './components/appComponents/landing';
 import Docs from './components/appComponents/docs';
 import Reporter from './components/appComponents/reporter';
 import NavBar from './components/appComponents/navBar';
+import FooterSection from './components/appComponents/footerSection';
 
 const contractCounter = require('../build/contracts/Counter.json');
 const contractIpfs = require('../build/contracts/Ipfs.json');
@@ -17,17 +18,20 @@ const routes = [
     path: '/',
     exact: true,
     header: () => <NavBar />,
-    main: () => <Landing />
+    main: () => <Landing />,
+    footer: () => <FooterSection />
   },
   {
     path: '/docs',
     header: () => <NavBar />,
     main: () => <Docs />,
+    footer: () => <FooterSection />
   },
   {
     path: '/reporter',
     header: () => <NavBar />,
-    main: () => <Reporter />
+    main: () => <Reporter />,
+    footer: () => <FooterSection />
   }
 ];
 
@@ -48,22 +52,32 @@ class App extends Component {
         }}
       >
         <Layout>
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              component={route.header}
-            />
-          ))}
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              component={route.main}
-            />
-          ))}
+          <Layout>
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                exact={route.exact}
+                component={route.header}
+              />
+            ))}
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                exact={route.exact}
+                component={route.main}
+              />
+            ))}
+            {routes.map((route, index) => (
+              <Route
+                key={index}
+                path={route.path}
+                exact={route.exact}
+                component={route.footer}
+              />
+            ))}
+          </Layout>
         </Layout>
       </Web3Gate>
     );
