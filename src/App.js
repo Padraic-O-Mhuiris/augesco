@@ -7,10 +7,7 @@ import { Layout } from 'antd';
 import Landing from './components/appComponents/landing';
 import Docs from './components/appComponents/docs';
 import Reporter from './components/appComponents/reporter';
-
-import SideNav from './components/appComponents/sideNav';
 import NavBar from './components/appComponents/navBar';
-const { Header } = Layout;
 
 const contractCounter = require('../build/contracts/Counter.json');
 const contractIpfs = require('../build/contracts/Ipfs.json');
@@ -26,7 +23,6 @@ const routes = [
     path: '/docs',
     header: () => <NavBar />,
     main: () => <Docs />,
-    sider: () => <SideNav />
   },
   {
     path: '/reporter',
@@ -60,24 +56,14 @@ class App extends Component {
               component={route.header}
             />
           ))}
-          <Layout>
-            {routes.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                exact={route.exact}
-                component={route.sider}
-              />
-            ))}
-            {routes.map((route, index) => (
-              <Route
-                key={index}
-                path={route.path}
-                exact={route.exact}
-                component={route.main}
-              />
-            ))}
-          </Layout>
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              component={route.main}
+            />
+          ))}
         </Layout>
       </Web3Gate>
     );
