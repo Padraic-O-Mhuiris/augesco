@@ -1,38 +1,26 @@
 import React, { Component } from 'react';
-import { Layout, Menu, Row, Col } from 'antd';
+import { Layout, Button, Row, Col } from 'antd';
+import { inject, observer } from 'mobx-react';
 
 const { Header } = Layout;
 
+@inject('router')
+@observer
 class HeaderSection extends Component {
   render() {
+    const { router } = this.props;
+    console.log(router)
     return (
       <Header className="header">
-        <Row>
-          <Col span={5} offset={3}>
-            <h1>Augesco</h1>
+        <Row type="flex" justify="start" align="middle">
+          <Col span={4} />
+          <Col span={5}>
+            <h1>AUGESCO</h1>
           </Col>
-          <Col span={8} offset={8}>
-            <Menu
-              mode="horizontal"
-              defaultSelectedKeys={['home']}
-              theme={"light"}
-            >
-              <Menu.Item
-                key="home"
-              >
-                HOME
-              </Menu.Item>
-              <Menu.Item
-                key="docs"
-              >
-                DOCS
-              </Menu.Item>
-              <Menu.Item
-                key="reports"
-              >
-                REPORTS
-              </Menu.Item>
-            </Menu>
+          <Col span={13}>
+            <Button onClick={() => router.push("/")}>Home</Button>
+            <Button onClick={() => router.push("/docs")}>Docs</Button>
+            <Button onClick={() => router.push("/reporter")}>Reporting</Button>
           </Col>
         </Row>
       </Header>
