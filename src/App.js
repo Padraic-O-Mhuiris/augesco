@@ -25,7 +25,6 @@ const routes = [
     path: '/docs',
     header: () => <NavBar />,
     main: () => <Docs />,
-    footer: () => <FooterSection />
   },
   {
     path: '/reporter',

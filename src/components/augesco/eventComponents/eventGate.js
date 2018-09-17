@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { txStatus } from "../../../constants";
-import { notification, Icon, Drawer } from "antd";
-import getWeb3Network from "../../../utils/getWeb3Network";
-import ChainLog from "./chainLog";
+import { notification, Icon } from "antd";
 
 const etherscan = {
   1: "https://etherscan.io/tx/",
@@ -96,22 +94,8 @@ class EventGate extends Component {
   }
 
   render() {
-    const { augesco } = this.props;
     return (
       <div>
-        <Drawer
-          title={
-            getWeb3Network(augesco.network).toUpperCase() +
-            " NETWORK - BlockHeaders"
-          }
-          placement="left"
-          width="500"
-          closable={true}
-          onClose={augesco.toggleInfo}
-          visible={augesco.info}
-        >
-          <ChainLog />
-        </Drawer>
         {this.props.children}
       </div>
     );

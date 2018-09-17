@@ -103,7 +103,6 @@ export const AugescoStore = types
     contracts: types.map(contractInstance),
     transactions: types.map(transactionInstance),
     loaded: false,
-    info: false
   })
   .actions(self => ({
     add(
@@ -129,9 +128,6 @@ export const AugescoStore = types
     },
     toggleLoaded() {
       self.loaded = !self.loaded;
-    },
-    toggleInfo() {
-      self.info = !self.info;
     },
     setWeb3(web3) {
       self.web3 = web3;
