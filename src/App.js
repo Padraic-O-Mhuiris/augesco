@@ -7,7 +7,7 @@ import { Layout } from 'antd';
 import Landing from './components/appComponents/landing';
 import Docs from './components/appComponents/docs';
 import Reporter from './components/appComponents/reporter';
-import NavBar from './components/appComponents/navBar';
+import HeaderSection from './components/appComponents/headerSection';
 import FooterSection from './components/appComponents/footerSection';
 
 const contractCounter = require('../build/contracts/Counter.json');
@@ -17,18 +17,18 @@ const routes = [
   {
     path: '/',
     exact: true,
-    header: () => <NavBar />,
+    header: () => <HeaderSection />,
     main: () => <Landing />,
     footer: () => <FooterSection />
   },
   {
     path: '/docs',
-    header: () => <NavBar />,
+    header: () => <HeaderSection />,
     main: () => <Docs />,
   },
   {
     path: '/reporter',
-    header: () => <NavBar />,
+    header: () => <HeaderSection />,
     main: () => <Reporter />,
     footer: () => <FooterSection />
   }

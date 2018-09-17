@@ -7,12 +7,11 @@ const { Sider } = Layout;
 class SideNav extends Component {
   render() {
     return (
-      <Sider width={200} style={{ background: '#fff' }}>
+      <Sider width={200}>
         <Menu
           mode="inline"
           defaultSelectedKeys={['1']}
           defaultOpenKeys={['sub1']}
-          style={{ height: '100%', borderRight: 0 }}
         >
           <SubMenu
             key="sub1"

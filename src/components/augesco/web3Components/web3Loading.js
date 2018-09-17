@@ -1,37 +1,31 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { Spin, Row, Col, Icon } from 'antd';
 
-const antIcon = <Icon type="loading" style={
-  {
-    fontSize: 150,
-    height: "150px",
-    width: "150px"
-  }} spin />;
+const antIcon = <Icon type="loading" spin />;
 
 class Web3Loading extends Component {
   render() {
     return (
-      <div >
+      <div>
         <Row type="flex" justify="center" align="middle">
-          <Col className="barrier-col" span={6}></Col>
+          <Col className="barrier-col" span={6} />
           <Col className="" span={12}>
             <Row type="flex" justify="center" align="middle">
-              <Col span={2}></Col>
+              <Col span={2} />
               <Col className="barrier-content" span={20}>
-
                 <h1>MetaMask is attempting to find network</h1>
                 <p>Ensure websocket provider is present!</p>
-                <br /><br />
+                <br />
+                <br />
                 <Spin indicator={antIcon} />
-
               </Col>
-              <Col span={2}></Col>
+              <Col span={2} />
             </Row>
           </Col>
-          <Col className="barrier-col" span={6}></Col>
+          <Col className="barrier-col" span={6} />
         </Row>
       </div>
-    )
+    );
   }
 }
 

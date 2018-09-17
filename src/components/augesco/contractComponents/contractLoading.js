@@ -1,12 +1,7 @@
 import React, { Component } from 'react'
 import { Spin, Row, Col, Icon } from 'antd';
 
-const antIcon = <Icon type="loading" style={
-  {
-    fontSize: 150,
-    height: "150px",
-    width: "150px"
-  }} spin />;
+const antIcon = <Icon type="loading" spin />;
 
 class ContractLoading extends Component {
   render() {

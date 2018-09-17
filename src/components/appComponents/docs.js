@@ -9,17 +9,8 @@ class Docs extends Component {
     return (
       <Layout>
         <SideNav />
-        <Layout style={{ padding: '24px 24px 24px' }}>
-          <Content
-            style={{
-              background: '#fff',
-              padding: 24,
-              margin: 0,
-              minHeight: 280
-            }}
-          >
-            Docs
-          </Content>
+        <Layout>
+          <Content>Docs</Content>
         </Layout>
       </Layout>
     );

@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
-import { web3Context } from "../../../constants";
-import ContractLoading from "./contractLoading";
-import EventGate from "../eventComponents/eventGate";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { web3Context } from '../../../constants';
+import ContractLoading from './contractLoading';
+import EventGate from '../eventComponents/eventGate';
 
-const EventEmitter = require("events");
+const EventEmitter = require('events');
 
-@inject("augesco")
+@inject('augesco')
 @observer
 class ContractGate extends Component {
   parseContractAbi(key, _abi) {
@@ -33,10 +33,10 @@ class ContractGate extends Component {
     for (const method of Object.keys(_methodsWeb3)) {
       if (/([a-z]*[()])/.test(method)) {
         const obj = {};
-        const key = method.split("(")[0];
-        obj["func"] = _methodsWeb3[method];
+        const key = method.split('(')[0];
+        obj['func'] = _methodsWeb3[method];
         const methodAbi = this.parseContractAbi(key, _abi);
-        methodAbi["func"] = _methodsWeb3[method];
+        methodAbi['func'] = _methodsWeb3[method];
         methodObj[key] = methodAbi;
       }
     }
