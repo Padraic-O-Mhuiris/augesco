@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import { Layout } from 'antd';
+
+const { Content } = Layout;
 
 class Reporter extends Component {
   render() {
     return (
-      <h2>Reporter</h2>
+      <Layout>
+        <Content>Reporter</Content>
+      </Layout>
     );
   }
 }

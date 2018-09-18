@@ -6,22 +6,11 @@ import { AugescoStore } from "./models/aguescoModel";
 import createBrowserHistory from "history/createBrowserHistory";
 import { Router } from "react-router";
 import { RouterModel, syncHistoryWithStore } from "mst-react-router";
-import { types } from "mobx-state-tree";
 import { Provider } from "mobx-react";
 import { onPatch } from "mobx-state-tree";
 
 const routerModel = RouterModel.create();
- 
-// Define root model type
-const Model = types.model({
-  router: RouterModel
-});
- 
-export const store = Model.create({ router: routerModel });
- 
-// Hook up router model to browser history object
 const history = syncHistoryWithStore(createBrowserHistory(), routerModel);
- 
 
 const augesco = AugescoStore.create({
   account: "",

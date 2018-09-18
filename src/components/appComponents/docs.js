@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
+import { Layout } from 'antd';
+import SideNav from './sideNav';
+
+const { Content } = Layout;
 
 class Docs extends Component {
   render() {
     return (
-      <h2>DOCS</h2>
+      <Layout>
+        <SideNav />
+        <Layout>
+          <Content>Docs</Content>
+        </Layout>
+      </Layout>
     );
   }
 }

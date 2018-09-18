@@ -1,42 +1,12 @@
 @import "~antd/dist/antd.less";
-@import "./vars.less";
-@import "./sidebar.less";
-@import "./font.less";
-@import "./barrier.less";
-@import "./card.less";
+@import "./default-overrides.less";
+@import "./header.less";
 
-html, body {
-  height: 100%;
-}
 body {
-  margin: 0;
-  // font-family: 'Raleway', sans-serif;
-}
-
-a {
-  text-decoration: none;
-  color: black;
-}
-
-a :hover{
-  text-decoration: none;
-  color: black;
-}
-
-a :visited{
-  text-decoration: none;
-  color: black;
-}
-
-a :link{
-  text-decoration: none;
-  color: black;
-}
-
-code {
-  font-family: 'Space Mono', monospace;
-  color: black;
-  background: #eee;
-  padding: 2px;
-  font-size: 14px;
+  min-height: 100%;
+  background: @layout-body-background;
+  font-family: Camphor, Open Sans, Segoe UI, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

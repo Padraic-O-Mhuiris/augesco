@@ -1,14 +1,12 @@
-import React, { Component } from "react";
-import { inject, observer } from "mobx-react";
-import { txStatus } from "../../../constants";
-import { notification, Icon, Drawer } from "antd";
-import getWeb3Network from "../../../utils/getWeb3Network";
-import ChainLog from "./chainLog";
+import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
+import { txStatus } from '../../../constants';
+import { notification, Icon } from 'antd';
 
 const etherscan = {
-  1: "https://etherscan.io/tx/",
-  3: "https://ropesten.etherscan.io/tx/",
-  4: "https://rinkeby.etherscan.io/tx/"
+  1: 'https://etherscan.io/tx/',
+  3: 'https://ropesten.etherscan.io/tx/',
+  4: 'https://rinkeby.etherscan.io/tx/'
 };
 
 const txMessage = (_msg, _link) => (
@@ -17,7 +15,7 @@ const txMessage = (_msg, _link) => (
   </a>
 );
 
-@inject("augesco")
+@inject('augesco')
 @observer
 class EventGate extends Component {
   componentDidMount() {
@@ -28,23 +26,23 @@ class EventGate extends Component {
       notification.open({
         key: hash,
         message: txMessage(
-          "Tx: " + hash.substring(0, 12) + "... broadcasted",
+          'Tx: ' + hash.substring(0, 12) + '... broadcasted',
           weblink + hash
         ),
-        description: "A new transaction has been submitted to the blockchain",
+        description: 'A new transaction has been submitted to the blockchain',
         duration: 0,
-        icon: <Icon type="to-top" style={{ color: "blue" }} />
+        icon: <Icon type="to-top" />
       });
 
       augesco.witness.once(txStatus.PENDING + hash, data => {
         notification.open({
           key: hash,
           message: txMessage(
-            "Tx: " + hash.substring(0, 12) + "... pending",
+            'Tx: ' + hash.substring(0, 12) + '... pending',
             weblink + hash
           ),
-          description: "This transaction is waiting to be mined",
-          icon: <Icon type="loading" style={{ color: "green" }} spin />,
+          description: 'This transaction is waiting to be mined',
+          icon: <Icon type="loading" spin />,
           duration: 0
         });
       });
@@ -53,11 +51,11 @@ class EventGate extends Component {
         notification.open({
           key: hash,
           message: txMessage(
-            "Tx: " + hash.substring(0, 12) + "... mined",
+            'Tx: ' + hash.substring(0, 12) + '... mined',
             weblink + hash
           ),
-          description: "This transaction has been mined",
-          icon: <Icon type="tool" style={{ color: "black" }} />,
+          description: 'This transaction has been mined',
+          icon: <Icon type="tool" />,
           duration: 0
         });
       });
@@ -66,11 +64,11 @@ class EventGate extends Component {
         notification.open({
           key: hash,
           message: txMessage(
-            "Tx: " + hash.substring(0, 12) + "... failed",
+            'Tx: ' + hash.substring(0, 12) + '... failed',
             weblink + hash
           ),
-          description: "This transaction has failed!",
-          icon: <Icon type="close-square" style={{ color: "red" }} />,
+          description: 'This transaction has failed!',
+          icon: <Icon type="close-square" />,
           duration: 10
         });
       });
@@ -79,11 +77,11 @@ class EventGate extends Component {
         notification.open({
           key: hash,
           message: txMessage(
-            "Tx: " + hash.substring(0, 12) + "... succeeded",
+            'Tx: ' + hash.substring(0, 12) + '... succeeded',
             weblink + hash
           ),
-          description: "This transaction has succeeded!",
-          icon: <Icon type="safety" style={{ color: "green" }} />,
+          description: 'This transaction has succeeded!',
+          icon: <Icon type="safety" />,
           duration: 10
         });
       });
@@ -96,25 +94,7 @@ class EventGate extends Component {
   }
 
   render() {
-    const { augesco } = this.props;
-    return (
-      <div>
-        <Drawer
-          title={
-            getWeb3Network(augesco.network).toUpperCase() +
-            " NETWORK - BlockHeaders"
-          }
-          placement="left"
-          width="500"
-          closable={true}
-          onClose={augesco.toggleInfo}
-          visible={augesco.info}
-        >
-          <ChainLog />
-        </Drawer>
-        {this.props.children}
-      </div>
-    );
+    return <div>{this.props.children}</div>;
   }
 }
 
